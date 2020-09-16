@@ -4,49 +4,49 @@ import android.app.Application
 import androidx.lifecycle.*
 import com.uniedu.Event
 import com.uniedu.model.*
-import com.uniedu.repository.RepoQuestionsFrag
+import com.uniedu.repository.RepoAnswersFrag
+import com.uniedu.repository.RepoCourses
 import com.uniedu.room.DatabaseRoom
+import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class ModelQuestionsFrag(application: Application) : AndroidViewModel(application) {
+class ModelCourses(application: Application) : AndroidViewModel(application) {
 
     private val database = DatabaseRoom.getDatabaseInstance(application)
     private val viewModelJob = SupervisorJob()//OR Job()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    private val schoolId = 56
-    private val answerDetailsRepo = RepoQuestionsFrag(database)
-
+    private val coursesRepo = RepoCourses(database)
+    private val myDetails = ClassSharedPreferences(application).getCurUserDetail()
 
     override fun onCleared() {
         super.onCleared()
         viewModelJob.cancel()
     }
     init {
-        refreshQuestion()
-    }
-    fun refreshQuestion(qSearchParam: QSearchParam = QSearchParam(schoolId)){
         viewModelScope.launch {
-            answerDetailsRepo.getQuestions(qSearchParam)
+            coursesRepo.getCourses(myDetails)
         }
     }
-    val questions: LiveData<List<Questions>> = answerDetailsRepo.questions
-    val feedBack = answerDetailsRepo.feedBack
+
+    fun refreshCourse(){
+        viewModelScope.launch {
+            coursesRepo.getCourses(myDetails)
+        }
+    }
+    val courses: LiveData<List<Courses>> = coursesRepo.courses
+    val feedBack = coursesRepo.feedBack
 
 
 
     //Current Question
-    val qSearchParam: LiveData<Event<QSearchParam>> get() = _qSearchParam
-    private val _qSearchParam = MutableLiveData<Event<QSearchParam>>().apply {
-        value = Event(QSearchParam(schoolId))
-    }
-    fun qSearchQuery(data: QSearchParam) {
-        _qSearchParam.value = Event(data)
-//        refreshQuestion(qSearchParam.value!!.getContentIfNotHandled()!!)
-        refreshQuestion(qSearchParam.value!!.peekContent())
+    val curCourse: LiveData<Event<Courses>> get() = _curCourse
+    private val _curCourse = MutableLiveData<Event<Courses>>()
+    fun setCurCourse(data: Courses) {
+        _curCourse.value = Event(data)
     }
 
 
@@ -66,9 +66,9 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
      */
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ModelQuestionsFrag::class.java)) {
+            if (modelClass.isAssignableFrom(ModelCourses::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ModelQuestionsFrag(app) as T
+                return ModelCourses(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }

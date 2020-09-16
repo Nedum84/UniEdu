@@ -1,6 +1,9 @@
 package com.uniedu.utils
 
 import android.content.Context
+import com.google.gson.Gson
+import com.uniedu.UrlHolder
+import com.uniedu.model.MyDetails
 
 class  ClassSharedPreferences(val context: Context?){
 
@@ -20,8 +23,10 @@ class  ClassSharedPreferences(val context: Context?){
         editor.putString(PREFERENCE_USER_DETAIL,data)
         editor.apply()
     }
-    fun getCurUserDetail():String{
-        return  preference.getString(PREFERENCE_USER_DETAIL,"")!!
+    fun getCurUserDetail():MyDetails{
+        val stringDetails = preference.getString(PREFERENCE_USER_DETAIL, "")!!
+        val myDetails = Gson().fromJson(stringDetails, MyDetails::class.java);
+        return  myDetails
     }
     //set access level
     fun setAccessLevel(data:Int){
@@ -58,7 +63,7 @@ class  ClassSharedPreferences(val context: Context?){
 
 
     fun isLoggedIn():Boolean{
-        return getCurUserDetail()!=""
+        return getCurUserDetail().name.isNotEmpty()
     }
 
 

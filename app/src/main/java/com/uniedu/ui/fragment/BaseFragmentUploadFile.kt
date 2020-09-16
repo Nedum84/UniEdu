@@ -1,7 +1,6 @@
 package com.uniedu.ui.fragment
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -27,7 +25,10 @@ import com.uniedu.extension.toast
 import com.uniedu.ui.activity.ActivityCropImage
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassUtilities
+import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.alert_dialog_inflate_choose_gallery.view.*
+import kotlinx.android.synthetic.main.alert_dialog_inflate_preview_image.view.*
+import kotlinx.android.synthetic.main.fragment_ask.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -38,57 +39,132 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
     var fileUri: Uri? = null
     var mediaPath: String? = null
     var mImageFileLocation = ""
-    var postPath: String? = null
+    var imageFilePath: String? = null
     var gifImgPath: String? = null
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        //image gif wrapper
+        //image preview
         imagePreviewWrapper.setOnClickListener {
-//            showImageDialog()
+            showImageDialog()
         }
         removeImageBTN.setOnClickListener {
             removeImage()
         }
-
         // get the file url
         fileUri = savedInstanceState?.getParcelable("file_uri")
     }
 
 
+    fun imagePickerDialog(){
+        ClassUtilities().hideKeyboard(imagePreviewWrapper, thisContext)
+
+        val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_choose_gallery, null)
+        val builder = AlertDialog.Builder(thisContext)
+        builder.setTitle("Choose Photo")
+        builder.setView(inflater)
+        val dialogImgPicker = builder.create()
+        dialogImgPicker.show()
+
+
+        //select from gallery
+        inflater.fromGallery.setOnClickListener {
+            dialogImgPicker.dismiss()
+            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+            } else {
+                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(galleryIntent, REQUEST_PICK_PHOTO)
+            }
+        }
+        //select from capture
+        inflater.fromCapture.setOnClickListener {
+            dialogImgPicker.dismiss()
+            // start the image capture Intent
+            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
+                (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+            } else {
+                captureImage()
+            }
+
+        }
+        //remove image
+        inflater.removeImage.setOnClickListener {
+            dialogImgPicker.dismiss()
+            removeImage()
+        }
+
+    }
+
+    private fun showImageDialog(){
+        ClassUtilities().hideKeyboard(view, thisContext)
+        val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_preview_image, null)
+        val builder = AlertDialog.Builder(thisContext)
+
+        if(imageFilePath!=null){
+            Glide.with(this).load(imageFilePath).into(inflater.dialogPreviewImage)
+        }
+
+        builder.setView(inflater)
+        builder.setPositiveButton("Crop"
+        ) { _, _ ->
+            //actions
+            prefs.setImgUploadPath(imageFilePath!!)
+            gotoCropActivity()
+        }
+        builder.setNeutralButton("Remove"
+        ) { _, _ ->
+            //actions
+            removeImage()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+    }
 
 
     override fun onResume() {
         super.onResume()
         if(prefs.getImgUploadPath() !="") {
-            postPath = prefs.getImgUploadPath()
+            imageFilePath = prefs.getImgUploadPath()
 
-            val postPathFile = File(postPath!!)
+            val postPathFile = File(imageFilePath!!)
             val inputFileInKb = postPathFile.length()/1024//KB like 358BB
-            if((postPath == null)||(postPathFile.length() <=3)){
+            if((imageFilePath == null)||(postPathFile.length() <=3)){
                 thisContext.toast("No Image selected...")
                 removeImage()
                 return
             }else if((inputFileInKb >= 1024)){//more than or equals 1MB
-                postPath = compressAndAssignPath(postPathFile)//resizing image...
+                imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
             }
 
             imagePreviewWrapper.visibility = View.VISIBLE
             pickImage.visibility = View.GONE
-            Glide.with(this).load(postPath).into(imagePreview)
+            Glide.with(this).load(imageFilePath).into(imagePreview)
 
         }else{
             removeImage()
         }
 
     }
+    private fun removeImage(){
+        imagePreview?.setImageDrawable(null)
+        imagePreviewWrapper?.visibility = View.GONE
+
+        pickImage.visibility = View.VISIBLE
+        imageFilePath = null
+        prefs.setImgUploadPath("")
+    }
 
     private fun compressAndAssignPath(postPathFile:File) :String?{
         val tmpImgPath = ClassUtilities().getDirPath(thisContext, "tmp")
 
-        val filePath = "$tmpImgPath/${postPath!!.split("/").last()}"
+        val filePath = "$tmpImgPath/${imageFilePath!!.split("/").last()}"
         try {
             Compressor(thisContext)
                 .setMaxWidth(640)
@@ -110,16 +186,6 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
         // changes
         outState.putParcelable("file_uri", fileUri)
     }
-
-    private fun removeImage(){
-        imagePreview?.setImageDrawable(null)
-        imagePreviewWrapper?.visibility = View.GONE
-
-        pickImage.visibility = View.VISIBLE
-        postPath = null
-        prefs.setImgUploadPath("")
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -148,18 +214,18 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
                     cursor.close()
 
 
-                    postPath = mediaPath
+                    imageFilePath = mediaPath
                 }
 
             } else if (requestCode == CAMERA_PIC_REQUEST) {
                 if (Build.VERSION.SDK_INT <= 21) {
                     Glide.with(this).load(fileUri).into(imagePreview)
-                    postPath = fileUri!!.path
+                    imageFilePath = fileUri!!.path
 
                 } else {
 
                     Glide.with(this).load(mImageFileLocation).into(imagePreview)
-                    postPath = mImageFileLocation
+                    imageFilePath = mImageFileLocation
 
                 }
 
@@ -177,18 +243,18 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
 
 
     private fun resizeAndGotoCrop() {
-        val postPathFile = File(postPath!!)
+        val postPathFile = File(imageFilePath!!)
         val inputFileInKb = postPathFile.length()/1024//KB like 358BB
-        if((postPath == null)||(postPathFile.length() <=3)){
+        if((imageFilePath == null)||(postPathFile.length() <=3)){
             ClassAlertDialog(thisContext).toast("No Image selected...")
             prefs.setImgUploadPath("")
             return
         }else if((inputFileInKb >= 500)){//more than or equals 500KB
-            postPath = compressAndAssignPath(postPathFile)//resizing image...
+            imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
         }
 
 
-        prefs.setImgUploadPath(postPath!!)
+        prefs.setImgUploadPath(imageFilePath!!)
         gotoCropActivity()
 
         pickImage.visibility = View.GONE
@@ -279,48 +345,6 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
 
     }
 
-
-    private fun imagePickerDialog(){
-        ClassUtilities().hideKeyboard(imagePreviewWrapper, thisContext)
-
-        val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_choose_gallery, null)
-        val builder = AlertDialog.Builder(thisContext)
-        builder.setTitle("Choose Photo")
-        builder.setView(inflater)
-        val dialogImgPicker = builder.create()
-        dialogImgPicker.show()
-
-
-        //select from gallery
-        inflater.fromGallery.setOnClickListener {
-            dialogImgPicker.dismiss()
-            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            } else {
-                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(galleryIntent, REQUEST_PICK_PHOTO)
-            }
-        }
-        //select from capture
-        inflater.fromCapture.setOnClickListener {
-            dialogImgPicker.dismiss()
-            // start the image capture Intent
-            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
-                (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            } else {
-                captureImage()
-            }
-
-        }
-        //remove image
-        inflater.removeImage.setOnClickListener {
-            dialogImgPicker.dismiss()
-            removeImage()
-        }
-
-    }
 
 
 

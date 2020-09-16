@@ -23,8 +23,8 @@ interface QuestionsDao {
     @Query("SELECT * FROM $TABLE_QUESTIONS ORDER BY question_id DESC")
     fun getAll(): LiveData<List<Questions>>
 
-    @Query("DELETE FROM $TABLE_QUESTIONS")
-    fun delete()
+    @Query("DELETE FROM $TABLE_QUESTIONS WHERE school_id = :id")
+    fun deleteNotMySchools(id: Int)
 
 }
 

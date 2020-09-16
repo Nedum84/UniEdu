@@ -4,7 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="question"
+            type="com.uniedu.model.Questions" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +32,7 @@
             app:titleTextColor="@color/colorPurpleDark" />
 
         <TextView
-            android:id="@+id/textView27"
+            android:id="@+id/submitQBTN"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -56,48 +59,104 @@
             android:orientation="vertical"
             app:layout_constraintGuide_begin="8dp" />
 
-        <ScrollView
+
+        <LinearLayout
+            android:id="@+id/inputWrapper"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline14"
             app:layout_constraintStart_toStartOf="@+id/guideline15"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <EditText
+                android:id="@+id/questionBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="400dp">
+                android:background="@null"
+                android:drawablePadding="5dp"
+                android:hint="Enter your question..."
+                android:text='@{TextUtils.isEmpty(question.question_body)?"":question.question_body}'
+                android:maxLines="20"
+                android:gravity="top"
+                android:minLines="2"
+                android:textColor="#777"
+                android:textColorHint="#c4c4c4"
+                android:textSize="16sp"
+                tools:ignore="Autofill,TextFields" />
 
-                <EditText
-                    android:id="@+id/editTextTextMultiLine2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/imagePreviewWrapper"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/inputWrapper">
+
+            <ImageView
+                android:id="@+id/imagePreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#10000000"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_launcher_background"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/removeImageBTN"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/border_circle_grey3"
+                android:padding="3dp"
+                app:srcCompat="@drawable/ic_baseline_close"
+                app:tint="@color/colorPurpleDark"
+                tools:ignore="ContentDescription" />
+
+        </RelativeLayout>
+
+        <com.github.florent37.shapeofview.shapes.DottedEdgesCutCornerView
+            android:id="@+id/pickImage"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@+id/imagePreviewWrapper"
+            app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
+            app:shape_dot_radius="3dp"
+            app:shape_dot_spacing="2dp"
+            app:shape_edge_position="right|left|top|bottom">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#D1D1D1"
+                android:gravity="center"
+                android:text="SELECT IMAGE" />
+        </com.github.florent37.shapeofview.shapes.DottedEdgesCutCornerView>
 
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/border_radius_black"
-                    android:drawableEnd="@drawable/ic_baseline_arrow_drop_down"
-                    android:padding="6dp"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="SELECT COURSE"
-                    android:textColor="@color/colorWhite"
-                    app:drawableTint="@color/colorWhite"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/editTextTextMultiLine2" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        <TextView
+            android:id="@+id/addQCourse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border_radius_black"
+            android:drawableEnd="@drawable/ic_baseline_arrow_drop_down"
+            android:padding="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="SELECT COURSE"
+            android:textColor="@color/colorWhite"
+            app:drawableTint="@color/colorWhite"
+            app:layout_constraintBottom_toBottomOf="@+id/pickImage"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
+            app:layout_constraintVertical_bias="0.531" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

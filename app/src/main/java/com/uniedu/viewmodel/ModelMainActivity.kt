@@ -1,4 +1,4 @@
-package com.ng.rapetracker.viewmodel
+package com.uniedu.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

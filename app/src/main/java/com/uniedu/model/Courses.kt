@@ -39,6 +39,9 @@ class Courses (
     fun courseCodeAndTitle():String{
         return "$course_code ($course_title)"
     }
+    fun courseCodeAndTitle2():String{
+        return "$course_code - $course_title"
+    }
 
     fun noOfTopics() = "$course_no_of_topics topics"
 

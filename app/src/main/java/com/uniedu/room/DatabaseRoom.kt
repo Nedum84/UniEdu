@@ -5,17 +5,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.ng.rapetracker.room.*
+import com.ng.rapetracker.room.ItemsForSaleDao
 import com.uniedu.model.*
 import com.uniedu.room.TableNames.Companion.DATABASE_NAME
 
-/**
- * A database that stores information.
- * And a global method to get access to the database.
- *
- * This pattern is pretty much the same for any database,
- * so you can reuse it.
- */
+
 @Database(entities = [Schools::class, Courses::class, EBooks::class, SchoolTypes::class, Answers::class, ItemCategory::class], version = 1, exportSchema = false)
 abstract class DatabaseRoom : RoomDatabase() {
 

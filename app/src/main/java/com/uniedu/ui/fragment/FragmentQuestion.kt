@@ -11,17 +11,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uniedu.R
-import com.uniedu.adapter.AdapterAnswer
 import com.uniedu.adapter.AdapterQuestion
-import com.uniedu.adapter.AnswerClickListener
 import com.uniedu.adapter.QuestionClickListener
-import com.uniedu.databinding.FragmentAnswersBinding
 import com.uniedu.databinding.FragmentQuestionBinding
 import com.uniedu.model.Questions
 import com.uniedu.room.DatabaseRoom
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassSharedPreferences
-import com.uniedu.viewmodel.ModelAnswersFrag
 import com.uniedu.viewmodel.ModelQuestionsFrag
 
 

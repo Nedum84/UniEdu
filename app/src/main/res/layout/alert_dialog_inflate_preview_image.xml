@@ -9,6 +9,6 @@
         android:id="@+id/dialogPreviewImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_share_white"
+        app:srcCompat="@drawable/ic_menu_camera"
         tools:ignore="ContentDescription"/>
 </ScrollView>

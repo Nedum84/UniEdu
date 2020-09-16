@@ -24,6 +24,7 @@ class ModelAnswersFrag(question: Questions, application: Application) : AndroidV
             answerDetailsRepo.getAnswers()
         }
     }
+
     fun refreshRapeDetail(){
         viewModelScope.launch {
             answerDetailsRepo.getAnswers()

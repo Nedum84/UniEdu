@@ -42,7 +42,7 @@
             custom:scv_crop_mode="free"
             custom:scv_frame_color="@color/colorPrimary"
             custom:scv_frame_stroke_weight="1dp"
-            custom:scv_guide_color="@color/colorAshBg"
+            custom:scv_guide_color="@color/colorLightGrey"
             custom:scv_guide_show_mode="show_always"
             custom:scv_guide_stroke_weight="1dp"
             custom:scv_handle_color="@color/colorRed"

@@ -16,8 +16,8 @@ interface CoursesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upSert(list: List<Courses>)//upsert -> Insert and/or update
 
-    @Query("DELETE FROM $TABLE_COURSES")
-    fun clearAllCourses()
+    @Query("DELETE FROM $TABLE_COURSES WHERE school_id =:id ")
+    fun deleteNotMySchools(id: Int)
 
     @Query("SELECT * from ${TABLE_COURSES} WHERE course_id = :id")
     suspend fun getById(id: Int): Courses?

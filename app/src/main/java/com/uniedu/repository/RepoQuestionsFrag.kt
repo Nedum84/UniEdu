@@ -31,7 +31,7 @@ class RepoQuestionsFrag(private val database: DatabaseRoom) {
             try {
                 val listResult = questionService.await()
                 if (qSearchParam.last_q_id==0){
-                    database.questionsDao.delete()
+                    database.questionsDao.deleteNotMySchools(qSearchParam.school_id)
                     database.questionsDao.upSert(listResult)
                 }else{
                     database.questionsDao.upSert(listResult)

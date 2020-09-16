@@ -15,12 +15,12 @@
  *
  */
 
-package com.ng.rapetracker
+package com.uniedu
 
 import android.app.Application
 import android.os.Build
 import androidx.work.*
-import com.ng.rapetracker.work.RefreshDataWorker
+import com.uniedu.work.RefreshDataWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
