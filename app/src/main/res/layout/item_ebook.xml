@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="ebook"
+            type="com.uniedu.model.EBooks" />
+        <variable
+            name="clickListener"
+            type="com.uniedu.adapter.EBookClickListener" />
+    </data>
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="128dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:padding="4dp"
+            android:onClick="@{()->clickListener.onClick(ebook)}">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/imageView5"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                app:cardUseCompatPadding="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    imagePath="@{ebook.book_cover}"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    app:srcCompat="@drawable/test"
+                    tools:ignore="ContentDescription" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:hint="Infinix HOT 6 + Rug and other(Please Specify)"
+                android:maxLines="2"
+                android:text="@{ebook.book_title}"
+                android:textColor="@color/colorBlack"
+                android:textColorHint="@color/colorBlack"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/border_radius_transparent"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:hint="ece332"
+                android:text="@{ebook.courseCode}"
+                android:textColor="@color/colorBlueSky"
+                android:textSize="8sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

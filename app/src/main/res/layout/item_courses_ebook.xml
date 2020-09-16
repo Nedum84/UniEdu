@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="course"
+            type="com.uniedu.model.Courses" />
+        <variable
+            name="clickListener"
+            type="com.uniedu.adapter.CoursesEBookClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/MaterialWrapper"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:background="?android:selectableItemBackground"
+        android:padding="5dp"
+        android:onClick="@{()->clickListener.onClick(course)}"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/MaterialCourseCode"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/border_radius_circle_grey"
+            android:gravity="center"
+            android:hint="EEE342"
+            android:text="@{course.course_code}"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/MaterialCourseTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:maxLines="2"
+            android:hint="Basic Electricity part Basic Electricity part 1 of part"
+            android:text="@{course.course_title}"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/MaterialCourseCode" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

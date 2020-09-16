@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="course"
+            type="com.uniedu.model.Courses" />
+        <variable
+            name="clickListener"
+            type="com.uniedu.adapter.VideoCoursesClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="6dp"
+        android:background="@color/colorGrey"
+        android:paddingBottom="4dp"
+        android:onClick="@{()-clickListener.onClick(course)}">
+
+        <ImageView
+            android:id="@+id/VidCourseBanner"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:background="#ff9800"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_menu_open"
+            imagePath="@{course.course_banner}"
+            app:tint="@color/colorGrey"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/VidCourseCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:hint="ME542(THERMODYMANICS)"
+            android:text="@{course.courseCodeAndTitle()}"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/VidCourseBanner" />
+
+
+        <TextView
+            android:id="@+id/VidNoOfTopics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/colorBlueSky"
+            android:padding="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:hint="12 topics"
+            android:text="@{course.noOfTopics()}"
+            android:textColor="@color/colorGrey"
+            android:textSize="10sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/VidCourseCode" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

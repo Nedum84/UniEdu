@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="topic"
+            type="com.uniedu.model.Topics" />
+        <variable
+            name="clickListener"
+            type="com.uniedu.adapter.TopicClickListener" />
+        <variable
+            name="idx"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        android:onClick="@{()->clickListener.onClick(topic)}">
+
+
+        <TextView
+            android:id="@+id/textView22"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="1. First Law of Thermodynamics"
+            android:text="@{topic.getTitle(idx)}"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorPurpleDark"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/videos_recycler"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView22" />
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{()->clickListener.onClickMenu(topic)}"
+            app:srcCompat="@drawable/ic_baseline_more_horiz"
+            tools:ignore="ContentDescription"
+            app:tint="@color/colorPurpleDark" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

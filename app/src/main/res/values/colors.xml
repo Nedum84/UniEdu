@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#2CC09C</color>
+    <color name="colorPrimaryDark">#04A880</color>
+    <color name="colorAccent">#F26950</color>
+    <color name="colorWhite">#fff</color>
+    <color name="colorBlueSky">#78909c</color>
+    <color name="colorPurpleDark">#33354E</color>
+    <color name="colorGrey">#FAFAFA</color>
+    <color name="colorLightGrey">#d6dced</color>
+    <color name="colorBlack">#000</color>
+    <color name="colorLightBlack">#FAFAFA</color>
+
+
+
+    <!--//image cropping-->
+    <color name="windowBackground">#1C1C1C</color>
+    <color name="colorButtonNormal">#f2f2f2</color>
+    <color name="textColorPrimary">#aaaaaa</color>
+    <color name="textColorPrimaryInverse">#1C1C1C</color>
+    <color name="overlay">#AA1C1C1C</color>
+    <color name="divider">#333333</color>
+</resources>
