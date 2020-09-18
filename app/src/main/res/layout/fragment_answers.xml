@@ -31,8 +31,8 @@
             app:navigationIcon="@drawable/ic_baseline_close_rotate"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="ECE 334"
-            app:subtitle="@{viewModel.curQuestion.courseCode()}"
             app:titleTextColor="@color/colorPurpleDark" />
+<!--        app:subtitle="@{viewModel.curQuestion.courseCode()}"-->
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline6"

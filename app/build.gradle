@@ -114,4 +114,8 @@ dependencies {
     implementation 'com.mindorks.android:prdownloader:0.6.0'
     //image cropping
     implementation 'com.isseiaoki:simplecropview:1.1.8'
+//    DialogPlus
+    implementation 'com.orhanobut:dialogplus:1.11@aar'
+//    Curved Bottom Sheet
+    implementation "com.github.TayfunCesur:CurvedBottomSheet:1.0.2"
 }

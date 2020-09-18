@@ -10,7 +10,18 @@ import com.uniedu.model.*
 import com.uniedu.room.TableNames.Companion.DATABASE_NAME
 
 
-@Database(entities = [Schools::class, Courses::class, EBooks::class, SchoolTypes::class, Answers::class, ItemCategory::class], version = 1, exportSchema = false)
+@Database(entities = [Schools::class,
+    Courses::class,
+    EBooks::class,
+    SchoolTypes::class,
+    Answers::class,
+    ItemCategory::class,
+    Videos::class,
+    Topics::class,
+    RecentlyViewed::class,
+    MySubscription::class,
+    ItemsForSale::class,
+    Questions::class], version = 1, exportSchema = false)
 abstract class DatabaseRoom : RoomDatabase() {
 
     /**

@@ -1,13 +1,17 @@
 package com.uniedu.ui.fragment.bottomsheet
 
+import android.app.Dialog
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uniedu.network.ServerResponse
 import com.uniedu.R
 import com.uniedu.databinding.FragmentAskBinding
@@ -53,18 +57,24 @@ class FragmentAsk : BaseFragmentUploadFile() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_ask, container, false)
-        databaseRoom = DatabaseRoom.getDatabaseInstance(thisContext)
-
-        val app = requireNotNull(this.activity).application
-        val mFactory = ModelQuestionsFrag.Factory(app)
-        modelQuestionsFrag = ViewModelProvider(this, mFactory).get(ModelQuestionsFrag::class.java)
-
+//        databaseRoom = DatabaseRoom.getDatabaseInstance(thisContext)
+//
+//        val app = requireNotNull(this.activity).application
+//        val mFactory = ModelQuestionsFrag.Factory(app)
+//        modelQuestionsFrag = ViewModelProvider(this, mFactory).get(ModelQuestionsFrag::class.java)
+//
         bindEvents()
 
         return binding.root
     }
 
     private fun bindEvents() {
+        binding.addQCourse.setOnClickListener{
+            FragmentChooseCourse.apply {
+                show(requireActivity().supportFragmentManager,tag)
+//                show(childFragmentManager,tag)
+            }
+        }
         binding.pickImage.setOnClickListener {
             imagePickerDialog()
         }
@@ -146,6 +156,28 @@ class FragmentAsk : BaseFragmentUploadFile() {
         }
     }
 
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = BottomSheetDialog(requireContext(), theme)
+        dialog.setOnShowListener {
+
+            val bottomSheetDialog = it as BottomSheetDialog
+            val parentLayout =
+                bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            parentLayout?.let { it ->
+                val behaviour = BottomSheetBehavior.from(it)
+                setupFullHeight(it)
+                behaviour.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+        return dialog
+    }
+
+    private fun setupFullHeight(bottomSheet: View) {
+        val layoutParams = bottomSheet.layoutParams
+        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
+        bottomSheet.layoutParams = layoutParams
+    }
 
 
     companion object {

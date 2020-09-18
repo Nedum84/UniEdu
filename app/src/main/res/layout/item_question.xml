@@ -42,7 +42,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:hint="Ece 356"
-            android:text="@{question.courseCode()}"
             bindCourseCode="@{question.course_id}"
             android:textAllCaps="true"
             android:textColor="@color/colorBlack"
@@ -52,6 +51,7 @@
             app:layout_constraintBottom_toTopOf="@+id/guideline10"
             app:layout_constraintStart_toEndOf="@+id/imageView8"
             app:layout_constraintTop_toTopOf="parent" />
+<!--        android:text="@{question.courseCode()}"-->
 
         <ImageView
             android:id="@+id/imageView9"

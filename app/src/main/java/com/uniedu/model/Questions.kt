@@ -48,19 +48,19 @@ class Questions(
     }?.course_code
 
 
-    fun courseCode2(db:DatabaseRoom, view:TextView){
-
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val course = db.coursesDao.getById(course_id.toInt())
-                view.text = course!!.course_code
-            } catch (e: Exception) {
-                e.printStackTrace()
-                view.text = course_id
-            }
-        }
-
-    }
+//    fun courseCode2(db:DatabaseRoom, view:TextView){
+//
+//        CoroutineScope(Dispatchers.Main).launch {
+//            try {
+//                val course = db.coursesDao.getById(course_id.toInt())
+//                view.text = course!!.course_code
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                view.text = course_id
+//            }
+//        }
+//
+//    }
 
     fun questionBody():String{
         return if (question_image_path.isNotEmpty()){

@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.uniedu.room.TableNames
+import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
 
 
@@ -17,9 +18,10 @@ class Topics (
     val topic_banner:String,
     val course_id:String,
     val school_id:String,
-    val arr_order:Int,
-    val videos: List<Videos>? = null
+    val arr_order:Int
 ):Parcelable{
 
+//    @IgnoredOnParcel
+//    val videos: List<Videos>? = null
     fun getTitle(idx:Int) = "$idx. $topic_name"
 }

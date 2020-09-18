@@ -3,13 +3,14 @@ package com.uniedu.ui.fragment
 import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseFragment : Fragment(), CoroutineScope{
+abstract class BaseFragment : BottomSheetDialogFragment(), CoroutineScope{
     lateinit var thisContext: Activity
     lateinit var prefs: ClassSharedPreferences
 

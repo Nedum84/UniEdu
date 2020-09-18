@@ -46,6 +46,8 @@ class AdapterTopic(private val clickListener: TopicClickListener) : RecyclerView
             val ADAPTER = AdapterVideo(VideoClickListener {
                 ClassAlertDialog(binding.videosRecycler.context).toast("${it.video_name}")
             })
+//            ADAPTER.list = item.videos!!
+
             binding.videosRecycler.apply {
                 layoutManager = childLayoutManager
                 adapter = ADAPTER
