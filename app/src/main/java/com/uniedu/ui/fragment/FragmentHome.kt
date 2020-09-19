@@ -1,5 +1,6 @@
 package com.uniedu.ui.fragment
 
+import android.app.ProgressDialog.show
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -10,12 +11,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.OnMenuItemClickListener
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import com.uniedu.R
+import com.uniedu.ui.fragment.bottomsheet.FragmentChooseCourse
+import com.uniedu.ui.fragment.bottomsheet.FragmentChooseSchool
 import com.uniedu.ui.home.HomeViewModel
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -74,7 +78,15 @@ class FragmentHome : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         school_selections.setOnClickListener {
-            powerMenu.showAsDropDown(it) // view is an anchor
+//            powerMenu.showAsDropDown(it) // view is an anchor
+
+
+            requireActivity()?.let {
+                FragmentChooseCourse().apply {
+//                    fragmentManager?.let { it1 -> show(it1, FragmentChooseCourse().tag) }
+                    show(it.supportFragmentManager, tag)
+                }
+            }
         }
     }
 }

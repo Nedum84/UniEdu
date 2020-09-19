@@ -13,11 +13,12 @@ interface AskQuestionService {
     fun askQuestionRequest(
 //        @Header("Authorization") authorization: String ,
         @Part("request_type") request_type: String,
-        @Part("my_details") my_details: MyDetails,
+        @Part("question_uploader") question_uploader: Int,
         @Part("question_body") question_body: String,
-        @PartMap imgMap: Map<String, RequestBody>? = null,
+        @PartMap imgMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
         @Part("course") course: String,
-        @Part("is_adding_new_question") is_adding_new_question:Boolean //to know if you are adding or editing(false)
+        @Part("is_adding_new_question") is_adding_new_question:Boolean, //to know if you are adding or editing(false)
+        @Part("image_is_removed") image_is_removed:Boolean = false
     ): Call<ServerResponse>
 }
 

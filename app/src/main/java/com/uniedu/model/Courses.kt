@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.uniedu.room.TableNames
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 
 @Parcelize
@@ -36,11 +37,14 @@ class Courses (
     var arr_order: Int
 ):Parcelable{
 
+    fun courseCode():String{
+        return course_code.toUpperCase(Locale.ROOT)
+    }
     fun courseCodeAndTitle():String{
-        return "$course_code ($course_title)"
+        return "${courseCode()} ($course_title)"
     }
     fun courseCodeAndTitle2():String{
-        return "$course_code - $course_title"
+        return "${courseCode()} - $course_title"
     }
 
     fun noOfTopics() = "$course_no_of_topics topics"

@@ -1,5 +1,7 @@
 package com.uniedu.repository
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.uniedu.model.Courses
@@ -8,6 +10,7 @@ import com.uniedu.model.QSearchParam
 import com.uniedu.model.Questions
 import com.uniedu.network.RetrofitConstantGET
 import com.uniedu.room.DatabaseRoom
+import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,7 +20,14 @@ import retrofit2.http.Query
 class RepoCourses(private val database: DatabaseRoom) {
 
 
-    val courses : LiveData<List<Courses>> = database.coursesDao.getAllCourses()
+//    val courses : LiveData<List<Courses>> = database.coursesDao.getAllCourses()
+    fun courses(searchQuery: String?=""):LiveData<List<Courses>>{
+
+        return if (searchQuery.isNullOrEmpty())
+            database.coursesDao.getAllCourses()
+        else
+            database.coursesDao.getAllCourses("%$searchQuery%")
+    }
 
     val feedBack:LiveData<String> get() = _feedBack
     private val _feedBack  = MutableLiveData<String>().apply {
@@ -36,7 +46,16 @@ class RepoCourses(private val database: DatabaseRoom) {
                 database.coursesDao.upSert(listResult)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _feedBack.value = "network_error"
+                _feedBack.postValue("network_error")
+            }
+        }
+    }
+    suspend fun addCourse(courses: List<Courses>){
+        withContext(Dispatchers.IO){
+            try {
+                database.coursesDao.upSert(courses)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -44,7 +63,7 @@ class RepoCourses(private val database: DatabaseRoom) {
 
 interface CourseService {
 
-    @GET("get_rape_detail.php")
+    @GET("get_courses.php")
     fun getCoursesAsync(
         @Query("school_id") school_id: String
     ): Deferred<List<Courses>>

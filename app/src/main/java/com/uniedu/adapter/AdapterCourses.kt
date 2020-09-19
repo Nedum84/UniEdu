@@ -12,7 +12,7 @@ import com.uniedu.model.EBooks
 import com.uniedu.model.Videos
 
 
-class AdapterCourses(private val clickListener: CourseClickListener) : RecyclerView.Adapter<AdapterCourses.ViewHolder>() {
+class AdapterCourses(private val clickListener: CourseClickListener2) : RecyclerView.Adapter<AdapterCourses.ViewHolder>() {
 
     var list: List<Courses> = emptyList()
         set(value) {
@@ -47,8 +47,13 @@ class AdapterCourses(private val clickListener: CourseClickListener) : RecyclerV
 }
 
 //CLICK LISTENER
-class CourseClickListener(val clickListener: (Courses) -> Unit) {
+class CourseClickListener(val clickListener: (Courses) -> Unit, val clickListener8: (Courses) -> Unit) {
     fun onClick(course: Courses) = clickListener(course)
-    fun onEditClick(course: Courses) = clickListener(course)
+    fun onEditClick(course: Courses) = clickListener8(course)
+}
+//CLICK LISTENER
+interface CourseClickListener2 {
+    fun onClick(course: Courses)
+    fun onEditClick(course: Courses)
 }
 

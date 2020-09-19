@@ -37,8 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="PUBLISH"
-            android:textColor="@color/colorBlueSky"
-            android:textColorHint="@color/colorBlueSky"
+            android:textColor="@color/colorPurpleDark"
+            android:textColorHint="@color/colorPurpleDark"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/toolbar"
@@ -94,7 +94,7 @@
             android:id="@+id/imagePreviewWrapper"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintStart_toStartOf="@+id/guideline15"
             app:layout_constraintTop_toBottomOf="@+id/inputWrapper">
 
@@ -125,11 +125,11 @@
             android:id="@+id/pickImage"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             app:layout_constraintStart_toEndOf="@+id/imagePreviewWrapper"
             app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
-            app:shape_dot_radius="3dp"
-            app:shape_dot_spacing="2dp"
+            app:shape_dot_radius="2dp"
+            app:shape_dot_spacing="1dp"
             app:shape_edge_position="right|left|top|bottom">
 
             <TextView
@@ -145,6 +145,7 @@
             android:id="@+id/addQCourse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             android:background="@drawable/border_radius_black"
             android:drawableEnd="@drawable/ic_baseline_arrow_drop_down"
             android:padding="6dp"
@@ -153,10 +154,8 @@
             android:text="SELECT COURSE"
             android:textColor="@color/colorWhite"
             app:drawableTint="@color/colorWhite"
-            app:layout_constraintBottom_toBottomOf="@+id/pickImage"
             app:layout_constraintEnd_toStartOf="@+id/guideline14"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
-            app:layout_constraintVertical_bias="0.531" />
+            app:layout_constraintTop_toBottomOf="@+id/inputWrapper" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

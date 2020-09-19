@@ -10,6 +10,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.navigation.NavigationView
@@ -18,10 +19,10 @@ import com.uniedu.R
 import com.uniedu.databinding.ActivityMainBinding
 import com.uniedu.extension.toast
 import com.uniedu.model.MyDetails
+import com.uniedu.model.Questions
 import com.uniedu.ui.fragment.bottomsheet.FragmentAsk
 import com.uniedu.utils.ClassSharedPreferences
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation
-import it.sephiroth.android.library.bottomnavigation.BottomNavigation.OnMenuChangedListener
 
 
 open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionListener {
@@ -32,11 +33,13 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
 //        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding
-//        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
+//        DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.apply {
+            lifecycleOwner = this@MainActivity
+        }
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
@@ -44,13 +47,13 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.nav_home,
-            R.id.nav_gallery,
-            R.id.nav_slideshow
-        ), drawerLayout)
+//        appBarConfiguration = AppBarConfiguration(setOf(
+//            R.id.nav_home,
+//            R.id.nav_gallery,
+//            R.id.nav_slideshow
+//        ), drawerLayout)
 //        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+//        navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
             if (destination.id == R.id.fragmentEBook || destination.id == R.id.fragmentQuestion || destination.id == R.id.fragmentTopicVideo) {
@@ -69,42 +72,49 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
         }
 
 
+//        val f = FragmentAsk.newInstance(Questions())
         FragmentAsk().apply {
-            show(supportFragmentManager, tag)
+//            show(supportFragmentManager, tag)
         }
+//        f.apply {
+//            show(supportFragmentManager, tag)
+//        }
 
-        val myDetails = MyDetails(1,"","","","","","","1")
+        val myDetails = MyDetails(1,"","","","","","42","1")
         ClassSharedPreferences(this).setCurUserDetail(Gson().toJson(myDetails))
 
-        getBottomNavigation()
+        initializeBottomNavigation(savedInstanceState)
+        mBottomNavigation.menuItemSelectionListener = this
 
-        getBottomNavigation()!!.menuChangedListener = object : OnMenuChangedListener {
-            override fun onMenuChanged(parent: BottomNavigation) {
-                this@MainActivity.toast("${parent.selectedIndex}...XSS")
-            }
-        }
-        mBottomNavigation.menuChangedListener
+
+//        mBottomNavigation.menuItemSelectionListener = object :BottomNavigation.OnMenuItemSelectionListener{
+//            override fun onMenuItemReselect(itemId: Int, position: Int, fromUser: Boolean) {
+//                TODO("Not yet implemented")
+//            }
+//
+//            override fun onMenuItemSelect(itemId: Int, position: Int, fromUser: Boolean) {
+//                this@MainActivity.toast("${position}...XSS")
+//            }
+//
+//        }
     }
     lateinit var mBottomNavigation:BottomNavigation
-    private fun getBottomNavigation(): BottomNavigation? {
-        if (null == mBottomNavigation) {
-            mBottomNavigation = findViewById(R.id.bottomNavigation)
-        }
-        return mBottomNavigation
-    }
+
     protected fun initializeBottomNavigation(savedInstanceState: Bundle?) {
         if (null == savedInstanceState) {
-            getBottomNavigation()?.setDefaultSelectedIndex(0)
-//            val provider: BadgeProvider = getBottomNavigation().getBadgeProvider()
-//            provider.show(R.id.bbn_item3)
-//            provider.show(R.id.bbn_item4)
+            mBottomNavigation = findViewById(R.id.bottomNavigation)
+            mBottomNavigation.setDefaultSelectedIndex(0)
+//            val provider: BadgeProvider? = mBottomNavigation.badgeProvider
+//            provider?.show(R.id.bbn_item3)
+//            provider?.show(R.id.bbn_item4)
+//            provider?.remove(R.id.bbn_item2)
         }
     }
 
 
 
     override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
+//        val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -118,7 +128,29 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
     }
 
     override fun onMenuItemSelect(itemId: Int, position: Int, fromUser: Boolean) {
-        this.toast("$itemId   -  $fromUser")
+        when(itemId){
+            R.id.bbn_home->{
+                navController.popBackStack()
+//                navController.navigate(R.id.nav_home)
+            }
+            R.id.bbn_video ->{
+//                navController.navigate(FragmentHomeDirections.actionNavHomeToFragmentTopicVideo())
+
+                navNavigate(R.id.fragmentTopicVideo)
+            }
+            R.id.bbn_ebook ->{
+                navNavigate(R.id.fragmentAsk)
+            }
+            R.id.bbn_qa ->{
+//                findNavController(R.id.nav_host_fragment).navigate(FragmentHomeDirections.actionNavHomeToFragmentQuestion())
+                navNavigate(R.id.fragmentQuestion)
+            }
+        }
+    }
+
+    fun navNavigate(itemId: Int){
+        if (navController.currentDestination!!.id != R.id.nav_home)navController.popBackStack()
+        navController.navigate(itemId)
     }
 
 

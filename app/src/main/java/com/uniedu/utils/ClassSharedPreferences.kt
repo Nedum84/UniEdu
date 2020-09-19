@@ -12,6 +12,7 @@ class  ClassSharedPreferences(val context: Context?){
     private val PREFERENCE_ACCESS_LEVEL= "access_level"
     private val PREFERENCE_OPENING_FOR_THE_FIRST_TIME= "opening_for_the_first_time"
     private val PREFERENCE_CUR_IMG_UPLOAD_PATH = "cur_image_upload_path"
+    private val PREFERENCE_SET_COURSE_QUERY = "set_course_query"
 
 
     private val preference = context?.getSharedPreferences(PREFERENCE_NAME,Context.MODE_PRIVATE)!!
@@ -56,6 +57,16 @@ class  ClassSharedPreferences(val context: Context?){
     }
     fun getImgUploadPath():String{
         return  preference.getString(PREFERENCE_CUR_IMG_UPLOAD_PATH,"")!!
+    }
+
+    //set searching course query
+    fun setSearchQuery(url:String){
+        val editor = preference.edit()
+        editor.putString(PREFERENCE_SET_COURSE_QUERY,url)
+        editor.apply()
+    }
+    fun getSearchQuery():String{
+        return  preference.getString(PREFERENCE_SET_COURSE_QUERY,"")!!
     }
 
 

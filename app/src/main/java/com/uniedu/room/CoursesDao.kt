@@ -20,10 +20,13 @@ interface CoursesDao {
     fun deleteNotMySchools(id: Int)
 
     @Query("SELECT * from ${TABLE_COURSES} WHERE course_id = :id")
-    suspend fun getById(id: Int): Courses?
+    fun getById(id: Int): Courses?
 
     @Query("SELECT * FROM $TABLE_COURSES ORDER BY course_id DESC")
     fun getAllCourses(): LiveData<List<Courses>>
+
+    @Query("SELECT * FROM $TABLE_COURSES WHERE course_code LIKE :id  ORDER BY course_id DESC")
+    fun getAllCourses(id: String): LiveData<List<Courses>>
 
 }
 

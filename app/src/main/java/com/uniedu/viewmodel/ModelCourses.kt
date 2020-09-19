@@ -1,17 +1,20 @@
 package com.uniedu.viewmodel
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.uniedu.Event
 import com.uniedu.model.*
 import com.uniedu.repository.RepoAnswersFrag
 import com.uniedu.repository.RepoCourses
 import com.uniedu.room.DatabaseRoom
+import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.util.*
 
 class ModelCourses(application: Application) : AndroidViewModel(application) {
 
@@ -26,9 +29,37 @@ class ModelCourses(application: Application) : AndroidViewModel(application) {
         super.onCleared()
         viewModelJob.cancel()
     }
+    private val _queryString = MutableLiveData<Event<String>>()
     init {
         viewModelScope.launch {
             coursesRepo.getCourses(myDetails)
+        }
+
+        _queryString.value = Event("")
+    }
+
+//    val courses: LiveData<List<Courses>> = coursesRepo.courses()
+    val feedBack = coursesRepo.feedBack
+
+    val queryString: LiveData<Event<String>> get() = _queryString
+
+    fun setSearchQuery(queryString: String=""){
+        val q = queryString.toLowerCase(Locale.ROOT).replace(" ","")
+        ClassSharedPreferences(getApplication()).setSearchQuery(q)
+
+        _queryString.value = Event(q)
+
+
+    }
+    fun courses(qString: String=""):LiveData<List<Courses>>{
+        return coursesRepo.courses(qString)
+    }
+
+
+
+    fun addToDb(courses: List<Courses>){
+        viewModelScope.launch {
+            coursesRepo.addCourse(courses)
         }
     }
 
@@ -37,8 +68,6 @@ class ModelCourses(application: Application) : AndroidViewModel(application) {
             coursesRepo.getCourses(myDetails)
         }
     }
-    val courses: LiveData<List<Courses>> = coursesRepo.courses
-    val feedBack = coursesRepo.feedBack
 
 
 

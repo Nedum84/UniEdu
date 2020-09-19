@@ -113,14 +113,14 @@ class ClassUtilities() {
         } catch (e: Exception) {}
     }
 
-    fun hideKeyboard(view: View?, activity: Activity){
-//        val view = currentFocus
+    fun hideKeyboard(view: View?, activity: Activity?){
+        val view = activity?.currentFocus
         try {
+            activity?.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
             if(view != null){
                 val inputManager = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputManager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
             }
-            activity.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
         } catch (e: Exception) {}
     }
 

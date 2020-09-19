@@ -3,13 +3,16 @@ package com.uniedu.ui.fragment.bottomsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uniedu.network.ServerResponse
@@ -22,8 +25,11 @@ import com.uniedu.network.AskQuestionService
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.room.DatabaseRoom
 import com.uniedu.ui.fragment.BaseFragmentUploadFile
+import com.uniedu.utils.ClassProgressDialog
+import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
 import com.uniedu.viewmodel.ModelQuestionsFrag
+import kotlinx.android.synthetic.main.fragment_ask.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -51,28 +57,34 @@ class FragmentAsk : BaseFragmentUploadFile() {
         arguments?.let {
             question = it.getParcelable(QUESTION)
             is_adding_new_question = false
+
+            if (!question!!.question_image_path.isNullOrEmpty()){
+                imagePreviewWrapper.visibility = View.VISIBLE
+                pickImage.visibility = View.GONE
+                Glide.with(this).load(imageFilePath).into(imagePreview)
+            }
         }
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_ask, container, false)
-//        databaseRoom = DatabaseRoom.getDatabaseInstance(thisContext)
-//
-//        val app = requireNotNull(this.activity).application
-//        val mFactory = ModelQuestionsFrag.Factory(app)
-//        modelQuestionsFrag = ViewModelProvider(this, mFactory).get(ModelQuestionsFrag::class.java)
-//
+
         bindEvents()
 
         return binding.root
     }
 
     private fun bindEvents() {
+        binding.toolbar.setNavigationOnClickListener {
+            dismiss()
+        }
+
         binding.addQCourse.setOnClickListener{
-            FragmentChooseCourse.apply {
-                show(requireActivity().supportFragmentManager,tag)
-//                show(childFragmentManager,tag)
+            requireActivity().let {
+                FragmentChooseCourse().apply {
+                    show(it.supportFragmentManager, tag)
+                }
             }
         }
         binding.pickImage.setOnClickListener {
@@ -82,54 +94,67 @@ class FragmentAsk : BaseFragmentUploadFile() {
             submitQuestion()
         }
 
-        val mFactory = ModelCourses.Factory(thisContext.application)
-        val modelCourses = ViewModelProvider(this, mFactory).get(ModelCourses::class.java)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        val viewModelFactory = ModelCourses.Factory(requireActivity().application)
+        val modelCourses = requireActivity().run{
+            ViewModelProvider(this, viewModelFactory).get(ModelCourses::class.java)
+        }
         modelCourses.curCourse.observe(viewLifecycleOwner, Observer {
             it?.getContentIfNotHandled().let {c->
-                binding.addQCourse.text = c?.course_code
+                binding.addQCourse.text = c?.courseCode()
                 course = c
             }
         })
     }
-
 
     private fun submitQuestion(){
         val question_body = binding.questionBody.text.toString().trim()
 
         if (question_body.isEmpty() && imageFilePath.isNullOrEmpty()){
             context.let {it!!.toast("No question entered")}
+        }else if (course==null || course!!.course_code.isNullOrEmpty()){
+            context.let {it!!.toast("Select course")}
         }else{
-//            val myDetails = Gson().fromJson(prefs.getCurUserDetail(), MyDetails::class.java)
-            val myDetails = prefs.getCurUserDetail()
+            ClassUtilities().hideKeyboard(binding.root, thisContext)
+            val pDialog = ClassProgressDialog(thisContext)
+            pDialog.createDialog()
 
             // Map is used to multipart the file using okhttp3.RequestBody
             val map = HashMap<String, RequestBody>()
-            val imgFile = File(imageFilePath!!)
+            val imgFile = File("$imageFilePath")
             // Parsing any Media type file
             val requestBody     = RequestBody.create(MediaType.parse("*/*"), imgFile)
             map["file\"; filename=\"" + imgFile.name + "\""] = requestBody
 
 
-            val file2 = File("gifImgPath")
-            val requestBodyImg2  = RequestBody.create(MediaType.parse("*/*"), file2)
-            map["file2\"; filename=\"" + file2.name + "\""] = requestBodyImg2
+//            val file2 = File("gifImgPath")
+//            val requestBodyImg2  = RequestBody.create(MediaType.parse("*/*"), file2)
+//            map["file2\"; filename=\"" + file2.name + "\""] = requestBodyImg2
 
-            val imgMap = if (imageFilePath!!.isNotEmpty())  map else null
+            val imgMap = if (!imageFilePath.isNullOrEmpty())  map else null
 
             val logComplainService = RetrofitPOST.retrofitWithJsonResponse.create(AskQuestionService::class.java)
             logComplainService.askQuestionRequest(
                 "ask_question",
-                myDetails,
+                myDetails.user_id,
                 "",
                 imgMap,
                 "${course?.course_id}",
-                is_adding_new_question
+                is_adding_new_question,
+                is_image_removed
             ).enqueue(object: Callback<ServerResponse> {
                 override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
+                    pDialog.dismissDialog()
                     requireContext().toast("No internet connect!")
+                    t.printStackTrace()
                 }
 
                 override fun onResponse(call: Call<ServerResponse>, response: Response<ServerResponse>) {
+                    pDialog.dismissDialog()
                     if (response.isSuccessful) {
                         if (response.body() != null) {
 
@@ -138,7 +163,7 @@ class FragmentAsk : BaseFragmentUploadFile() {
                             if (!(serverResponse!!.success as Boolean)){
                                 context!!.toast(serverResponse.respMessage!!)
                             }else{
-                                context!!.toast("Complain logged Successfully...")
+                                context!!.toast("Question added...")
 
 //                                Adding to DB
                                 val listResult = serverResponse.otherDetail

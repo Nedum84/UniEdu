@@ -42,6 +42,7 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
     var imageFilePath: String? = null
     var gifImgPath: String? = null
 
+    var is_image_removed = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -147,6 +148,7 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
             pickImage.visibility = View.GONE
             Glide.with(this).load(imageFilePath).into(imagePreview)
 
+            is_image_removed = false
         }else{
             removeImage()
         }
@@ -158,6 +160,7 @@ abstract class BaseFragmentUploadFile : BaseFragment(){
 
         pickImage.visibility = View.VISIBLE
         imageFilePath = null
+        is_image_removed = true
         prefs.setImgUploadPath("")
     }
 

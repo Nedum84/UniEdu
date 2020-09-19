@@ -38,7 +38,7 @@ class RepoQuestionsFrag(private val database: DatabaseRoom) {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _feedBack.value = "network_error"
+                _feedBack.postValue("network_error")
             }
         }
     }

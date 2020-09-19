@@ -9,17 +9,7 @@
         android:id="@+id/nav_home"
         android:name="com.uniedu.ui.fragment.FragmentHome"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_nav_home_to_fragmentEBook"
-            app:destination="@id/fragmentEBook" />
-        <action
-            android:id="@+id/action_nav_home_to_fragmentQuestion"
-            app:destination="@id/fragmentQuestion" />
-        <action
-            android:id="@+id/action_nav_home_to_fragmentTopicVideo"
-            app:destination="@id/fragmentTopicVideo" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/fragmentQuestion"
@@ -36,4 +26,17 @@
         android:name="com.uniedu.ui.fragment.FragmentEBook"
         android:label="fragment_e_book"
         tools:layout="@layout/fragment_e_book" />
+    <fragment
+        android:id="@+id/fragmentItemForSale"
+        android:name="com.uniedu.ui.fragment.FragmentItemForSale"
+        android:label="fragment_item_for_sale"
+        tools:layout="@layout/fragment_item_for_sale" />
+    <dialog
+        android:id="@+id/fragmentChooseCourse"
+        android:name="com.uniedu.ui.fragment.bottomsheet.FragmentChooseCourse"
+        android:label="FragmentChooseCourse" />
+    <fragment
+        android:id="@+id/fragmentAsk"
+        android:name="com.uniedu.ui.fragment.bottomsheet.FragmentAsk"
+        android:label="FragmentAsk" />
 </navigation>

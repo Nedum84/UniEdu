@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/bbn_item1"
+        android:id="@+id/bbn_home"
         android:color="@color/colorPrimary"
         android:icon="@drawable/ic_menu_slideshow"
         android:title="Home" />
     <item
-        android:id="@+id/bbn_item2"
+        android:id="@+id/bbn_video"
         android:color="@android:color/holo_green_dark"
         android:icon="@drawable/ic_baseline_menu_open"
         android:title="Videos" />
     <item
-        android:id="@+id/bbn_item3"
+        android:id="@+id/bbn_ebook"
         android:color="@android:color/holo_orange_dark"
         android:icon="@drawable/ic_menu_camera"
         android:title="eBooks" />

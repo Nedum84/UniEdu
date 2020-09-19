@@ -22,8 +22,8 @@ class RetrofitPOST {
 
     companion object{
         private val client: OkHttpClient =  OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.MINUTES)
-            .readTimeout(5, TimeUnit.MINUTES)
+            .connectTimeout(4, TimeUnit.SECONDS)//timeout after n(4) econds
+            .readTimeout(4, TimeUnit.SECONDS)
             .build()
 
         //    Retrofit with json response
