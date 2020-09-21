@@ -2,7 +2,6 @@ package com.uniedu.ui.fragment.bottomsheet
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.content.DialogInterface
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
@@ -10,31 +9,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.PEEK_HEIGHT_AUTO
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.uniedu.R
 import com.uniedu.adapter.AdapterCourses
-import com.uniedu.adapter.CourseClickListener
 import com.uniedu.adapter.CourseClickListener2
 import com.uniedu.databinding.FragmentChooseCourseBinding
 import com.uniedu.extension.toast
 import com.uniedu.model.Courses
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.network.ServerResponse
-import com.uniedu.ui.fragment.BaseFragment
+import com.uniedu.ui.fragment.BaseFragmentBottomSheet
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
@@ -47,7 +44,7 @@ import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 
-class FragmentChooseCourse : BaseFragment() {
+class FragmentChooseCourse : BaseFragmentBottomSheet() {
     lateinit var binding:FragmentChooseCourseBinding
     lateinit var modelCourses: ModelCourses
     lateinit var ADAPTER:AdapterCourses
@@ -116,6 +113,7 @@ class FragmentChooseCourse : BaseFragment() {
         binding.recyclerCourses.apply {
             adapter = ADAPTER
             layoutManager= LinearLayoutManager(activity)
+            itemAnimator = DefaultItemAnimator()
         }
 
         modelCourses.feedBack.observe(viewLifecycleOwner, Observer {
@@ -264,7 +262,7 @@ class FragmentChooseCourse : BaseFragment() {
 
 //                                    OR------>
 //                                    val courses =  Gson().fromJson(resp.otherDetail!!, Array<Courses>::class.java).asList()
-                                    modelCourses.addToDb(courses)
+//                                    modelCourses.addToDb(courses)
 
                                 } catch (e: Exception) {
                                     e.printStackTrace()

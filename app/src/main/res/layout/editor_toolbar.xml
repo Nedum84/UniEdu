@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fadingEdge="horizontal"
+        android:fadingEdgeLength="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:requiresFadingEdge="horizontal">
+
+        <ImageButton
+            android:id="@+id/action_undo"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_undo"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/action_redo"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_redo"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/action_bold"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_bold"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/action_Italic"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_italic" />
+
+        <ImageButton
+            android:id="@+id/action_subscript"
+            style="@style/editorToolbar"
+            android:padding="8dp"
+            android:src="@drawable/z_editor_subscript" />
+
+        <ImageButton
+            android:id="@+id/action_superscript"
+            style="@style/editorToolbar"
+            android:padding="8dp"
+            android:src="@drawable/z_editor_superscript" />
+
+        <ImageButton
+            android:id="@+id/action_strikethrough"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_strikethrough" />
+
+        <ImageButton
+            android:id="@+id/action_underline"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_underlined" />
+
+        <Button
+            android:id="@+id/action_heading1"
+            style="@style/editorToolbar"
+            android:text="H1" />
+
+        <Button
+            android:id="@+id/action_heading2"
+            style="@style/editorToolbar"
+            android:text="H2" />
+
+        <Button
+            android:id="@+id/action_heading3"
+            style="@style/editorToolbar"
+            android:text="H3" />
+
+        <Button
+            android:id="@+id/action_heading4"
+            style="@style/editorToolbar"
+            android:text="H4" />
+
+        <Button
+            android:id="@+id/action_heading5"
+            style="@style/editorToolbar"
+            android:text="H5" />
+
+        <Button
+            android:id="@+id/action_heading6"
+            style="@style/editorToolbar"
+            android:text="H6" />
+
+
+        <ImageButton
+            android:id="@+id/action_txt_color"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_colors" />
+
+
+        <ImageButton
+            android:id="@+id/action_bg_color"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_color" />
+
+
+        <ImageButton
+            android:id="@+id/action_indent"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_indent" />
+
+        <ImageButton
+            android:id="@+id/action_outdent"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_outdent" />
+
+        <ImageButton
+            android:id="@+id/action_align_left"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_align_left" />
+
+        <ImageButton
+            android:id="@+id/action_align_center"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_align_center" />
+
+        <ImageButton
+            android:id="@+id/action_align_right"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_align_right" />
+
+        <ImageButton
+            android:id="@+id/action_insert_bullets"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_bullet_list" />
+
+        <ImageButton
+            android:id="@+id/action_insert_numbers"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_numbered_list" />
+
+        <ImageButton
+            android:id="@+id/action_blockquote"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_ic_blockquote" />
+
+        <ImageButton
+            android:id="@+id/action_insert_image"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_image" />
+
+        <ImageButton
+            android:id="@+id/action_insert_audio"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_audio_music" />
+
+        <ImageButton
+            android:id="@+id/action_insert_video"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_video_library" />
+
+        <ImageButton
+            android:id="@+id/action_insert_youtube"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_youtube" />
+
+        <ImageButton
+            android:id="@+id/action_insert_link"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_link" />
+
+        <ImageButton
+            android:id="@+id/action_insert_checkbox"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_check_box" />
+
+
+        <ImageButton
+            android:id="@+id/action_erase"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_erase" />
+    </LinearLayout>
+</HorizontalScrollView>

@@ -17,13 +17,13 @@ object ClassTextBinding {
     fun bindCourseCode(view: TextView, course_id: String){
         val db = DatabaseRoom.getDatabaseInstance(view.context)
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.Default).launch {
             try {
                 val course = db.coursesDao.getById(course_id.toInt())
                 view.text = course!!.course_code
             } catch (e: Exception) {
                 e.printStackTrace()
-                view.text = course_id
+                view.text = course_id+"ccc"
             }
         }
 

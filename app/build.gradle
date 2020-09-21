@@ -118,4 +118,10 @@ dependencies {
     implementation 'com.orhanobut:dialogplus:1.11@aar'
 //    Curved Bottom Sheet
     implementation "com.github.TayfunCesur:CurvedBottomSheet:1.0.2"
+    //text editor
+    implementation 'jp.wasabeef:richeditor-android:2.0.0'
+    //text editor 2
+    implementation 'com.github.irshulx:laser-native-editor:3.0.4'
+//    color picker
+    implementation 'com.github.duanhong169:colorpicker:1.1.1'
 }

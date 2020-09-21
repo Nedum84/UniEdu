@@ -7,10 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
-    <include layout="@layout/content_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="45dp"/>
+    <include layout="@layout/content_main"/>
     <it.sephiroth.android.library.bottomnavigation.BottomNavigation
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"

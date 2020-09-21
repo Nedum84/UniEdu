@@ -18,7 +18,7 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     private val schoolId = 56
-    private val answerDetailsRepo = RepoQuestionsFrag(database)
+    private val questionsRepo = RepoQuestionsFrag(database)
 
 
     override fun onCleared() {
@@ -30,11 +30,11 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
     }
     fun refreshQuestion(qSearchParam: QSearchParam = QSearchParam(schoolId)){
         viewModelScope.launch {
-            answerDetailsRepo.getQuestions(qSearchParam)
+            questionsRepo.getQuestions(qSearchParam)
         }
     }
-    val questions: LiveData<List<Questions>> = answerDetailsRepo.questions
-    val feedBack = answerDetailsRepo.feedBack
+    val questions: LiveData<List<Questions>> = questionsRepo.questions
+    val feedBack = questionsRepo.feedBack
 
 
 
@@ -48,6 +48,14 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
 //        refreshQuestion(qSearchParam.value!!.getContentIfNotHandled()!!)
         refreshQuestion(qSearchParam.value!!.peekContent())
     }
+
+//    Add to db
+    fun addToDb(questions: List<Questions>){
+        viewModelScope.launch {
+            questionsRepo.addQuestion(questions)
+        }
+    }
+
 
 
 

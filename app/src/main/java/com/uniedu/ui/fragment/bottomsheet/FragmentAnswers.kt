@@ -1,17 +1,20 @@
 package com.uniedu.ui.fragment.bottomsheet
 
-import android.app.Activity
+import android.app.Dialog
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.Parcelable
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.uniedu.utils.ClassSharedPreferences
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uniedu.R
 import com.uniedu.adapter.AdapterAnswer
 import com.uniedu.adapter.AnswerClickListener
@@ -19,7 +22,7 @@ import com.uniedu.databinding.FragmentAnswersBinding
 import com.uniedu.model.Answers
 import com.uniedu.model.Questions
 import com.uniedu.room.DatabaseRoom
-import com.uniedu.ui.fragment.BaseFragment
+import com.uniedu.ui.fragment.BaseFragmentBottomSheet
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.viewmodel.ModelAnswersFrag
 
@@ -27,7 +30,7 @@ import com.uniedu.viewmodel.ModelAnswersFrag
 private const val QUESTION = "question"
 
 
-class FragmentAnswer : BaseFragment() {
+class FragmentAnswer : BaseFragmentBottomSheet() {
     private var question: Questions? = null
     lateinit var binding: FragmentAnswersBinding
     lateinit var fAnsModel: ModelAnswersFrag
@@ -38,6 +41,7 @@ class FragmentAnswer : BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
         question = arguments?.getParcelable(QUESTION)
     }
 
@@ -54,6 +58,20 @@ class FragmentAnswer : BaseFragment() {
             viewModel = fAnsModel
         }
 
+//        binding.answerQuestion.setOnClickListener {
+//            requireActivity().let {
+//                FragmentAnswerQuestion.newInstance(question!!).apply {
+//                    show(it.supportFragmentManager, tag)
+//                }
+//            }
+//        }
+        binding.answerQuestion.setOnClickListener {
+            requireActivity().let {
+                FragmentEBookDetail().apply {
+                    show(it.supportFragmentManager, tag)
+                }
+            }
+        }
 
 
         ADAPTER = AdapterAnswer(AnswerClickListener {
@@ -62,6 +80,7 @@ class FragmentAnswer : BaseFragment() {
         binding.recyclerAnswers.apply {
             adapter = ADAPTER
             layoutManager= LinearLayoutManager(activity)
+            itemAnimator = DefaultItemAnimator()
         }
 
         fAnsModel.answers.observe(viewLifecycleOwner, Observer {
@@ -104,6 +123,16 @@ class FragmentAnswer : BaseFragment() {
     }
 
 
+    //FULL SCREEN DIALOG
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return BottomSheetDialog(requireContext(), theme).apply {
+            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
+//            behavior.peekHeight = PEEK_HEIGHT_AUTO
+//            behavior.peekHeight = Resources.getSystem().displayMetrics.heightPixels
+            behavior.peekHeight = Resources.getSystem().displayMetrics.heightPixels-200
+        }
+    }
 
     companion object {
 

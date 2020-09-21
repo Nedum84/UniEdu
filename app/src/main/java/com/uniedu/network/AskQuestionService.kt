@@ -9,11 +9,12 @@ import retrofit2.http.*
 
 interface AskQuestionService {
     @Multipart
-    @POST("ask_question.php")
+    @POST("add_question.php")
     fun askQuestionRequest(
 //        @Header("Authorization") authorization: String ,
         @Part("request_type") request_type: String,
         @Part("question_uploader") question_uploader: Int,
+        @Part("school_id") school_id: String,
         @Part("question_body") question_body: String,
         @PartMap imgMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
         @Part("course") course: String,

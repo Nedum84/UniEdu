@@ -3,19 +3,20 @@ package com.uniedu.ui.fragment.bottomsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.os.Parcelable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.uniedu.network.ServerResponse
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.uniedu.R
 import com.uniedu.databinding.FragmentAskBinding
 import com.uniedu.extension.toast
@@ -23,8 +24,9 @@ import com.uniedu.model.Courses
 import com.uniedu.model.Questions
 import com.uniedu.network.AskQuestionService
 import com.uniedu.network.RetrofitPOST
+import com.uniedu.network.ServerResponse
 import com.uniedu.room.DatabaseRoom
-import com.uniedu.ui.fragment.BaseFragmentUploadFile
+import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
@@ -36,11 +38,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.util.HashMap
+import java.util.*
 
 private const val QUESTION = "question"
 
-class FragmentAsk : BaseFragmentUploadFile() {
+class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
     private var question: Questions? = null
     lateinit var binding:FragmentAskBinding
     lateinit var databaseRoom: DatabaseRoom
@@ -65,6 +67,7 @@ class FragmentAsk : BaseFragmentUploadFile() {
             }
         }
     }
+
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
@@ -109,6 +112,12 @@ class FragmentAsk : BaseFragmentUploadFile() {
                 course = c
             }
         })
+
+
+        val vFactory = ModelQuestionsFrag.Factory(requireActivity().application)
+        modelQuestionsFrag = requireActivity().run{
+            ViewModelProvider(this, vFactory).get(ModelQuestionsFrag::class.java)
+        }
     }
 
     private fun submitQuestion(){
@@ -135,13 +144,14 @@ class FragmentAsk : BaseFragmentUploadFile() {
 //            val requestBodyImg2  = RequestBody.create(MediaType.parse("*/*"), file2)
 //            map["file2\"; filename=\"" + file2.name + "\""] = requestBodyImg2
 
-            val imgMap = if (!imageFilePath.isNullOrEmpty())  map else null
+            val imgMap = if (!imageFilePath.isNullOrEmpty())  map else HashMap<String, RequestBody>()
 
             val logComplainService = RetrofitPOST.retrofitWithJsonResponse.create(AskQuestionService::class.java)
             logComplainService.askQuestionRequest(
-                "ask_question",
+                "add_question",
                 myDetails.user_id,
-                "",
+                myDetails.user_school,
+                "$question_body",
                 imgMap,
                 "${course?.course_id}",
                 is_adding_new_question,
@@ -163,13 +173,19 @@ class FragmentAsk : BaseFragmentUploadFile() {
                             if (!(serverResponse!!.success as Boolean)){
                                 context!!.toast(serverResponse.respMessage!!)
                             }else{
-                                context!!.toast("Question added...")
+                                thisContext.toast(if (is_adding_new_question) "Question published" else "Question updated")
 
-//                                Adding to DB
-                                val listResult = serverResponse.otherDetail
-//                                databaseRoom.questionsDao.upSert(listResult)
-//                                OR
-                                modelQuestionsFrag.refreshQuestion()
+                                try {//add to database
+                                    val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+                                    val type = Types.newParameterizedType(MutableList::class.java,Questions::class.java)
+                                    val adapter: JsonAdapter<List<Questions>> = moshi.adapter(type)
+                                    val questions: List<Questions> = adapter.fromJson(serverResponse.otherDetail!!)!!
+                                    modelQuestionsFrag.addToDb(questions)
+
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                                questionSubmitted()
                             }
                         }
                     } else {
@@ -179,6 +195,20 @@ class FragmentAsk : BaseFragmentUploadFile() {
 
             })
         }
+    }
+
+    private fun questionSubmitted() {
+        imagePreview?.setImageDrawable(null)
+        imagePreviewWrapper?.visibility = View.GONE
+
+        pickImage.visibility = View.VISIBLE
+        imageFilePath = null
+        prefs.setImgUploadPath("")
+
+        binding.questionBody.setText("")
+        binding.addQCourse.text = "Select Course"
+        dismiss()
+        dialog?.dismiss()
     }
 
 

@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseFragment : BottomSheetDialogFragment(), CoroutineScope{
+abstract class BaseFragment : Fragment(), CoroutineScope{
     lateinit var thisContext: Activity
     lateinit var prefs: ClassSharedPreferences
     lateinit var myDetails: MyDetails

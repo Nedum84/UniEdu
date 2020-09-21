@@ -3,12 +3,14 @@
     <color name="colorPrimary">#2CC09C</color>
     <color name="colorPrimaryDark">#04A880</color>
     <color name="colorAccent">#F26950</color>
+    <color name="colorAccentLight">#80F26950</color>
     <color name="colorWhite">#fff</color>
     <color name="colorBlueSky">#78909c</color>
     <color name="colorPurpleDark">#33354E</color>
     <color name="colorGrey">#FAFAFA</color>
     <color name="colorLightGrey">#d6dced</color>
     <color name="colorBlack">#000</color>
+    <color name="colorBlackLight">#444</color>
     <color name="colorLightBlack">#FAFAFA</color>
     <color name="colorRed">#C84146</color>
 

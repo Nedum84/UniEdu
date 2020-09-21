@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Logger
 
-abstract class BaseFragmentUploadFile : BaseFragment(){
+abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
 
     var fileUri: Uri? = null
     var mediaPath: String? = null

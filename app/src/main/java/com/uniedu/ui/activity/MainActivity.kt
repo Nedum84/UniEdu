@@ -1,31 +1,29 @@
 package com.uniedu.ui.activity
 
 import android.os.Bundle
+import android.os.Environment
 import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import com.uniedu.R
+import com.uniedu.UrlHolder
 import com.uniedu.databinding.ActivityMainBinding
 import com.uniedu.extension.toast
 import com.uniedu.model.MyDetails
-import com.uniedu.model.Questions
 import com.uniedu.ui.fragment.bottomsheet.FragmentAsk
+import com.uniedu.utils.ClassCustomExceptionHandler
 import com.uniedu.utils.ClassSharedPreferences
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation
 
 
-open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionListener {
+class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionListener {
     lateinit var binding: ActivityMainBinding
 
     lateinit var navController: NavController
@@ -33,6 +31,8 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appCrashReport()//SEND APP CRASH REPORTS
+
 //        setContentView(R.layout.activity_main)
 //        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
 //        DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding
@@ -149,8 +149,12 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
     }
 
     fun navNavigate(itemId: Int){
-        if (navController.currentDestination!!.id != R.id.nav_home)navController.popBackStack()
-        navController.navigate(itemId)
+        try {
+            if (navController.currentDestination!!.id != R.id.nav_home)navController.popBackStack()
+            navController.navigate(itemId)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
 
@@ -189,4 +193,14 @@ open class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelect
 //        )
 //    }
 
+
+
+
+    //    FOR CRASH REPORTS
+    private fun appCrashReport(){
+        if (Thread.getDefaultUncaughtExceptionHandler() !is ClassCustomExceptionHandler){
+            Thread.setDefaultUncaughtExceptionHandler(ClassCustomExceptionHandler(
+                Environment.getExternalStorageDirectory().path + "/"+ UrlHolder.APP_FOLDER_NAME+"/reports", "http://<desired_url>/upload.php"))
+        }
+    }
 }

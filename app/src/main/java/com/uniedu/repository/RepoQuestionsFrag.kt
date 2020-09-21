@@ -2,6 +2,7 @@ package com.uniedu.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.uniedu.model.Courses
 import com.uniedu.model.QSearchParam
 import com.uniedu.model.Questions
 import com.uniedu.network.RetrofitConstantGET
@@ -39,6 +40,17 @@ class RepoQuestionsFrag(private val database: DatabaseRoom) {
             } catch (e: Exception) {
                 e.printStackTrace()
                 _feedBack.postValue("network_error")
+            }
+        }
+    }
+
+
+    suspend fun addQuestion(questions: List<Questions>){
+        withContext(Dispatchers.IO){
+            try {
+                database.questionsDao.upSert(questions)
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
