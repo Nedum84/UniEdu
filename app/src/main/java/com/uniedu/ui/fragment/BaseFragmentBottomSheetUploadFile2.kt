@@ -3,34 +3,43 @@ package com.uniedu.ui.fragment
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.annotation.RawRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.uniedu.BuildConfig
 import com.uniedu.R
-import com.uniedu.extension.toast
+import com.uniedu.extension.*
 import com.uniedu.ui.activity.ActivityCropImage
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassUtilities
 import id.zelory.compressor.Compressor
-import kotlinx.android.synthetic.main.alert_dialog_inflate_choose_gallery.view.*
 import kotlinx.android.synthetic.main.alert_dialog_inflate_preview_image.view.*
-import kotlinx.android.synthetic.main.fragment_ask.*
+import kotlinx.android.synthetic.main.bottomsheet_ebook_upload_type.view.*
 import kotlinx.android.synthetic.main.fragment_upload_e_book.*
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Logger
@@ -41,9 +50,8 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
     var mediaPath: String? = null
     var mImageFileLocation = ""
     var imageFilePath: String? = null
-    var gifImgPath: String? = null
 
-    var is_image_removed = false
+    var fileType = "IMAGE"
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -60,46 +68,58 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
     }
 
 
-    fun imagePickerDialog(){
-        ClassUtilities().hideKeyboard(imagePreviewWrapper, thisContext)
+    fun bottomSheetDialog() {
+        if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
+            (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(
+                thisContext,
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                0
+            )
+        }//else return
 
-        val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_choose_gallery, null)
-        val builder = AlertDialog.Builder(thisContext)
-        builder.setTitle("Choose Photo")
-        builder.setView(inflater)
-        val dialogImgPicker = builder.create()
-        dialogImgPicker.show()
 
+//        val bottomSheetDialogView: View = layoutInflater.inflate(R.layout.bottomsheet_ebook_upload_type, null)
+        val bottomSheetDialogView: View =LayoutInflater.from(context).inflate(R.layout.bottomsheet_ebook_upload_type, null)
+        val bSheetDialog = BottomSheetDialog(requireContext())
+        bSheetDialog.setContentView(bottomSheetDialogView)
+        val bSheetBehaviour = bSheetDialog.behavior
+        bSheetDialog.show()
 
-        //select from gallery
-        inflater.fromGallery.setOnClickListener {
-            dialogImgPicker.dismiss()
-            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            } else {
-                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                startActivityForResult(galleryIntent, REQUEST_PICK_PHOTO)
+        bottomSheetDialogView.pdf_upload.setAllOnClickListener(View.OnClickListener {
+            bSheetDialog.dismiss()
+
+            val intent = Intent()
+            intent.action = Intent.ACTION_GET_CONTENT
+            intent.type = "application/pdf"
+//            startActivity(intent)
+            startActivityForResult(intent, REQUEST_PICK_PHOTO)
+        })
+        bottomSheetDialogView.gallery_upload.addOnClickListener {
+            bSheetDialog.dismiss()
+            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(galleryIntent, REQUEST_PICK_PHOTO)
+        }
+        bottomSheetDialogView.camera_upload.addOnClickListener {
+            bSheetDialog.dismiss()
+            captureImage()
+        }
+
+        bSheetBehaviour.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {}
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_EXPANDED -> ""
+                    BottomSheetBehavior.STATE_COLLAPSED -> ""
+                    else -> ""
+                }
             }
-        }
-        //select from capture
-        inflater.fromCapture.setOnClickListener {
-            dialogImgPicker.dismiss()
-            // start the image capture Intent
-            if (Build.VERSION.SDK_INT >= 23 && ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED||
-                (ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(thisContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(thisContext, arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
-            } else {
-                captureImage()
-            }
-
-        }
-        //remove image
-        inflater.removeImage.setOnClickListener {
-            dialogImgPicker.dismiss()
-            removeImage()
-        }
-
+        })
     }
 
     private fun showImageDialog(){
@@ -108,15 +128,21 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         val builder = AlertDialog.Builder(thisContext)
 
         if(imageFilePath!=null){
-            Glide.with(this).load(imageFilePath).into(inflater.dialogPreviewImage)
+            Glide.with(this)
+                .load(
+                    if(fileType=="pdf") pdfImgPath else imageFilePath
+                )
+                .into(inflater.dialogPreviewImage)
         }
 
         builder.setView(inflater)
-        builder.setPositiveButton("Crop"
-        ) { _, _ ->
-            //actions
-            prefs.setImgUploadPath(imageFilePath!!)
-            gotoCropActivity()
+        if (fileType !="pdf"){
+            builder.setPositiveButton("Crop"
+            ) { _, _ ->
+                //actions
+                prefs.setImgUploadPath(imageFilePath!!)
+                gotoCropActivity()
+            }
         }
         builder.setNeutralButton("Remove"
         ) { _, _ ->
@@ -149,8 +175,7 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
             pickImage.visibility = View.GONE
             Glide.with(this).load(imageFilePath).into(imagePreview)
 
-            is_image_removed = false
-        }else{
+        }else if(fileType!="pdf"){
             removeImage()
         }
 
@@ -161,7 +186,6 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
 
         pickImage.visibility = View.VISIBLE
         imageFilePath = null
-        is_image_removed = true
         prefs.setImgUploadPath("")
     }
 
@@ -209,12 +233,12 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
                     val columnIndex = cursor.getColumnIndex(filePathColumn[0])
 //                    mediaPath = cursor.getString(columnIndex)
 //                    OR
-                    mediaPath = ClassUtilities().getFilePathFromURI(thisContext,selectedImage)
+                    mediaPath = ClassUtilities().getFilePathFromURI(thisContext, selectedImage)
                     // Set the Image in ImageView for Previewing the Media
                     val options = BitmapFactory.Options()//additional parameter
                     options.inSampleSize = 2//additional parameter
 
-                    imagePreview.setImageBitmap(BitmapFactory.decodeFile(mediaPath,options))
+                    imagePreview.setImageBitmap(BitmapFactory.decodeFile(mediaPath, options))
                     cursor.close()
 
 
@@ -238,11 +262,62 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
 
 
 
-            resizeAndGotoCrop()
+
+
+
+            if (imageFilePath!!.getFileExt() != "pdf"){
+                fileType = "image"
+                resizeAndGotoCrop()
+            }else{
+                fileType = "pdf"
+                pickImage.visibility = View.GONE
+                val imgBitmap = openPdfWithAndroidSDK()
+                pdfImgPath = context?.saveImgFromBitmap(imgBitmap)!!
+
+                imagePreview.setImageBitmap(imgBitmap)
+            }
 
         } else if (resultCode != Activity.RESULT_CANCELED) {
             Toast.makeText(thisContext, "Sorry, there was an error!", Toast.LENGTH_LONG).show()
         }
+    }
+    private var pdfImgPath = ""
+    private var mPdfRenderer: PdfRenderer? = null
+    private var mPdfPage: PdfRenderer.Page? = null
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mPdfPage != null) {
+            mPdfPage?.close()
+        }
+        if (mPdfRenderer != null) {
+            mPdfRenderer?.close()
+        }
+    }
+    // Display a page from the PDF on an ImageView
+    @Throws(IOException::class)
+    fun openPdfWithAndroidSDK(pageNumber: Int=0):Bitmap {
+        // Copy sample.pdf from 'res/raw' folder into local cache so PdfRenderer can handle it
+        val fileCopy = File(imageFilePath!!)
+
+        // We will get a page from the PDF file by calling openPage
+        val fileDescriptor: ParcelFileDescriptor = ParcelFileDescriptor.open(
+            fileCopy,
+            ParcelFileDescriptor.MODE_READ_ONLY
+        )
+        mPdfRenderer = PdfRenderer(fileDescriptor)
+        mPdfPage = mPdfRenderer?.openPage(pageNumber)
+
+        // Create a new bitmap and render the page contents on to it
+        val bitmap = Bitmap.createBitmap(
+            mPdfPage!!.width,
+            mPdfPage!!.height,
+            Bitmap.Config.ARGB_8888
+        )
+//        For pdf rendering
+        mPdfPage?.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+
+        return bitmap
     }
 
 
@@ -264,6 +339,7 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         pickImage.visibility = View.GONE
     }
     private fun gotoCropActivity(){
+
         startActivity(Intent(thisContext, ActivityCropImage::class.java))
         thisContext.overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left)
     }
@@ -356,9 +432,9 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 ClassUtilities().createDirs(thisContext)
-                captureImage()
+                bottomSheetDialog()
             }else{
-                ClassAlertDialog(thisContext).alertMessage("You must allow camera permission in order to take/pick a picture")
+                ClassAlertDialog(thisContext).alertMessage("You must allow camera permission to proceed")
             }
         }
     }

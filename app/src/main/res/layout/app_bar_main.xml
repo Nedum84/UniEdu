@@ -7,7 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.activity.MainActivity">
 
-    <include layout="@layout/content_main"/>
+    <include layout="@layout/content_main"
+        app:layout_constraintBottom_toBottomOf="@+id/bottomNavigation"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
     <it.sephiroth.android.library.bottomnavigation.BottomNavigation
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
@@ -20,4 +23,6 @@
         app:bbn_badgeProvider="@string/bbn_badgeProvider"
         app:layout_behavior="@string/bbn_phone_view_behavior" />
 
+<!--    <include-->
+<!--        layout="@layout/bottomsheet_ebook_upload_type"/>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

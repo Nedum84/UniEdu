@@ -1,8 +1,10 @@
 package com.uniedu.extension
 
 import android.content.Context
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.constraintlayout.widget.Group
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -28,6 +30,13 @@ fun <T: Any> String.toListModel(item:T):List<T>{
     val modelList: List<T> = adapter.fromJson(this)!!
 
     return modelList
+
+//    val cls = (t as Any).javaClass //unsafe
+//    val clsOrNull = (t as? Any)?.javaClass //safe
+
+}
+inline fun <reified T : Any> test(t: T) {
+    println(T::class)
 }
 
 fun List<String>.replaceWithNewImgPath(htmlString: String, serverResponse:String?):String{
@@ -46,4 +55,21 @@ fun List<String>.replaceWithNewImgPath(htmlString: String, serverResponse:String
     }
 
     return content
+}
+
+//Click listener to constraint lsyout group 1
+fun Group.setAllOnClickListener(listener: View.OnClickListener?) {
+    referencedIds.forEach { id ->
+        rootView.findViewById<View>(id).setOnClickListener(listener)
+    }
+}
+//Click listener to constraint layout group 2
+fun Group.addOnClickListener(listener: (view: View) -> Unit) {
+    referencedIds.forEach { id ->
+        rootView.findViewById<View>(id).setOnClickListener(listener)
+    }
+}
+//get extension
+fun String.getFileExt():String{
+    return this.split(".").last().toLowerCase()
 }

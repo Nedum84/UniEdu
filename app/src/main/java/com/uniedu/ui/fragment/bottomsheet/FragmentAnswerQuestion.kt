@@ -13,8 +13,6 @@ import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import com.orhanobut.dialogplus.DialogPlus
-import com.orhanobut.dialogplus.ViewHolder
 import com.uniedu.R
 import com.uniedu.databinding.FragmentAnswerQuestionBinding
 import com.uniedu.databinding.FragmentEBookDetailBinding

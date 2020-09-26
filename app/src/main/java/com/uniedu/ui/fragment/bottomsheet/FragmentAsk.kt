@@ -23,7 +23,6 @@ import com.uniedu.extension.*
 import com.uniedu.model.Answers
 import com.uniedu.model.Courses
 import com.uniedu.model.Questions
-import com.uniedu.network.AskQuestionService
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.network.ServerResponse
 import com.uniedu.room.DatabaseRoom
@@ -42,6 +41,10 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.PartMap
 import java.io.File
 import java.util.*
 
@@ -147,8 +150,8 @@ class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
     private fun publishContent(content:String = mEditor.html) {
         val retrofit = RetrofitPOST.retrofitWithJsonResponse.create(AskQuestionService::class.java)
         retrofit.askQuestionRequest(
-            "add_question",
-            myDetails.user_id,
+            request_type = "add_question",
+            question_from = myDetails.user_id,
             school_id = myDetails.user_school,
             question_body = content,
             imgMap = null,
@@ -212,4 +215,21 @@ class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
                 }
             }
     }
+}
+
+
+interface AskQuestionService {
+    @Multipart
+    @POST("add_question.php")
+    fun askQuestionRequest(
+//        @Header("Authorization") authorization: String ,
+        @Part("request_type") request_type: String,
+        @Part("question_from") question_from: Int,
+        @Part("school_id") school_id: String,
+        @Part("question_body") question_body: String,
+        @PartMap imgMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
+        @Part("course") course: String,
+        @Part("is_adding_new_question") is_adding_new_question:Boolean, //to know if you are adding or editing(false)
+        @Part("image_is_removed") image_is_removed:Boolean = false
+    ): Call<ServerResponse>
 }

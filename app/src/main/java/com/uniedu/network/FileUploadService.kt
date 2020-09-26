@@ -6,19 +6,17 @@ import retrofit2.Call
 import retrofit2.http.*
 
 
-interface AskQuestionService {
+interface UploadEBookService {
     @Multipart
     @POST("add_question.php")
-    fun askQuestionRequest(
-//        @Header("Authorization") authorization: String ,
+    fun upload(
         @Part("request_type") request_type: String,
         @Part("question_from") question_from: Int,
         @Part("school_id") school_id: String,
         @Part("question_body") question_body: String,
         @PartMap imgMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
         @Part("course") course: String,
-        @Part("is_adding_new_question") is_adding_new_question:Boolean, //to know if you are adding or editing(false)
-        @Part("image_is_removed") image_is_removed:Boolean = false
+        @Part("is_adding_new_question") is_adding_new_question:Boolean //to know if you are adding or editing(false)
     ): Call<ServerResponse>
 }
 

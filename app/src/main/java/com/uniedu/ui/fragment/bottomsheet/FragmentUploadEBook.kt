@@ -1,12 +1,17 @@
 package com.uniedu.ui.fragment.bottomsheet
 
+import android.Manifest
 import android.app.Dialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
+import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,22 +23,24 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.uniedu.R
-import com.uniedu.databinding.FragmentAskBinding
 import com.uniedu.databinding.FragmentUploadEBookBinding
+import com.uniedu.extension.addOnClickListener
+import com.uniedu.extension.makeFullScreen
+import com.uniedu.extension.setAllOnClickListener
 import com.uniedu.extension.toast
 import com.uniedu.model.Courses
+import com.uniedu.model.EBooks
 import com.uniedu.model.Questions
-import com.uniedu.network.AskQuestionService
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.network.ServerResponse
+import com.uniedu.network.UploadEBookService
 import com.uniedu.room.DatabaseRoom
-import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile
 import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile2
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
 import com.uniedu.viewmodel.ModelQuestionsFrag
-import kotlinx.android.synthetic.main.fragment_ask.*
+import kotlinx.android.synthetic.main.bottomsheet_ebook_upload_type.view.*
 import kotlinx.android.synthetic.main.fragment_upload_e_book.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -43,12 +50,11 @@ import retrofit2.Response
 import java.io.File
 import java.util.*
 
-private const val QUESTION = "question"
+private const val EBOOK = "question"
 
 class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
-    private var question: Questions? = null
+    private var ebook: EBooks? = null
     lateinit var binding:FragmentUploadEBookBinding
-    lateinit var databaseRoom: DatabaseRoom
 
     lateinit var modelQuestionsFrag: ModelQuestionsFrag
 
@@ -60,17 +66,17 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            question = it.getParcelable(QUESTION)
-            is_adding_new_question = false
-
-            if (!question!!.question_image_path.isNullOrEmpty()){
+            ebook = it.getParcelable(EBOOK)
+            ebook?.let {
                 imagePreviewWrapper.visibility = View.VISIBLE
                 pickImage.visibility = View.GONE
                 Glide.with(this).load(imageFilePath).into(imagePreview)
+
+
+                is_adding_new_question = false
             }
         }
     }
-
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
@@ -93,17 +99,25 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
                 }
             }
         }
-        binding.pickImage.setOnClickListener {
-            imagePickerDialog()
-        }
         binding.submitQBTN.setOnClickListener {
             submitQuestion()
         }
 
+
+        binding.pickImage.setOnClickListener {
+            bottomSheetDialog()
+        }
     }
 
+
+
+    private fun disableBottomSheetDraggableBehavior() {
+        this.isCancelable = false
+        this.dialog?.setCanceledOnTouchOutside(true)
+    }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        disableBottomSheetDraggableBehavior()
 
         val viewModelFactory = ModelCourses.Factory(requireActivity().application)
         val modelCourses = requireActivity().run{
@@ -143,22 +157,17 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
             map["file\"; filename=\"" + imgFile.name + "\""] = requestBody
 
 
-//            val file2 = File("gifImgPath")
-//            val requestBodyImg2  = RequestBody.create(MediaType.parse("*/*"), file2)
-//            map["file2\"; filename=\"" + file2.name + "\""] = requestBodyImg2
-
             val imgMap = if (!imageFilePath.isNullOrEmpty())  map else HashMap<String, RequestBody>()
 
-            val logComplainService = RetrofitPOST.retrofitWithJsonResponse.create(AskQuestionService::class.java)
-            logComplainService.askQuestionRequest(
+            val uploadEbook = RetrofitPOST.retrofitWithJsonResponse.create(UploadEBookService::class.java)
+            uploadEbook.upload(
                 "add_question",
                 myDetails.user_id,
                 myDetails.user_school,
                 "$question_body",
                 imgMap,
                 "${course?.course_id}",
-                is_adding_new_question,
-                is_image_removed
+                is_adding_new_question
             ).enqueue(object: Callback<ServerResponse> {
                 override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
                     pDialog.dismissDialog()
@@ -215,36 +224,19 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
     }
 
 
+    //Make full screen
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = BottomSheetDialog(requireContext(), theme)
-        dialog.setOnShowListener {
-
-            val bottomSheetDialog = it as BottomSheetDialog
-            val parentLayout =
-                bottomSheetDialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-            parentLayout?.let { it ->
-                val behaviour = BottomSheetBehavior.from(it)
-                setupFullHeight(it)
-                behaviour.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
-        return dialog
+        val dialog = context?.makeFullScreen(this)
+        return dialog!!
     }
-
-    private fun setupFullHeight(bottomSheet: View) {
-        val layoutParams = bottomSheet.layoutParams
-        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT
-        bottomSheet.layoutParams = layoutParams
-    }
-
 
     companion object {
 
         @JvmStatic
-        fun newInstance(param: Parcelable) =
-            FragmentAsk().apply {
+        fun newInstance(ebook: Parcelable? = null) =
+            FragmentUploadEBook().apply {
                 arguments = Bundle().apply {
-                    putParcelable(QUESTION, param)
+                    putParcelable(EBOOK, ebook)
                 }
             }
     }
