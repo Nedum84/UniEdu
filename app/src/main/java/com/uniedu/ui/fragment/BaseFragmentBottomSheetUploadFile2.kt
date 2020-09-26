@@ -16,136 +16,56 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
 import com.uniedu.BuildConfig
 import com.uniedu.R
-import com.uniedu.UrlHolder
-import com.uniedu.extension.replaceWithNewImgPath
 import com.uniedu.extension.toast
-import com.uniedu.network.RetrofitPOST
-import com.uniedu.network.ServerResponse
-import com.uniedu.network.UploadImage
 import com.uniedu.ui.activity.ActivityCropImage
 import com.uniedu.utils.ClassAlertDialog
-import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
-import com.uniedu.viewmodel.ModelUploadFile
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.alert_dialog_inflate_choose_gallery.view.*
-import kotlinx.android.synthetic.main.fragment_answer_question.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.android.synthetic.main.alert_dialog_inflate_preview_image.view.*
+import kotlinx.android.synthetic.main.fragment_ask.*
+import kotlinx.android.synthetic.main.fragment_upload_e_book.*
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Logger
 
-abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
-    var pDialog: ClassProgressDialog? = null
-    lateinit var modelUploadFile: ModelUploadFile
+abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
 
     var fileUri: Uri? = null
     var mediaPath: String? = null
     var mImageFileLocation = ""
     var imageFilePath: String? = null
+    var gifImgPath: String? = null
 
+    var is_image_removed = false
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        //image preview
+        imagePreviewWrapper.setOnClickListener {
+            showImageDialog()
+        }
+        removeImageBTN.setOnClickListener {
+            removeImage()
+        }
         // get the file url
         fileUri = savedInstanceState?.getParcelable("file_uri")
-        pDialog = ClassProgressDialog(thisContext)
-    }
-
-    fun initToolbar(view: View) {
-        val toolbar = view.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
-        toolbar.inflateMenu(R.menu.menu_ask_q)
-        toolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
-        }
-        toolbar.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.action_menu_filter_question->{
-
-                }
-                else -> super.onOptionsItemSelected(it)
-            }
-            true
-        }
-
-        view.findViewById<View>(R.id.action_insert_image).setOnClickListener {
-            imagePickerDialog()
-        }
     }
 
 
-    fun uploadImage(imgPaths:List<String>) {
-
-        val map = HashMap<String, RequestBody>()
-
-        for (i in imgPaths.indices){
-            val imgFile = File(imgPaths[i])
-            val requestBody     = RequestBody.create(MediaType.parse("*/*"), imgFile)
-            map["file$i\"; filename=\"" + imgFile.name + "\""] = requestBody
-        }
-
-
-        val imgUpload = RetrofitPOST.retrofitWithJsonResponse.create(UploadImage::class.java)
-        imgUpload.upload(
-            "upload_image",
-            "answer",
-            map
-        ).enqueue(object: Callback<ServerResponse> {
-            override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
-                pDialog?.dismissDialog()
-                requireContext().toast("No internet connect!")
-                t.printStackTrace()
-            }
-
-            override fun onResponse(call: Call<ServerResponse>, response: Response<ServerResponse>) {
-                if (response.isSuccessful) {
-                    if (response.body() != null) {
-
-                        val serverResponse = response.body()
-
-                        if (!(serverResponse!!.success as Boolean)){
-                            context!!.toast(serverResponse.respMessage!!)
-                        }else{
-                            val content = imgPaths.replaceWithNewImgPath(editor.html, serverResponse.otherDetail)
-
-                            modelUploadFile.isFileUloaded(content)
-                        }
-                    }
-                } else {
-                    context!!.toast("An error occurred, Try again")
-                }
-            }
-
-        })
-    }
-
-    fun published() {
-        removeImage()
-        dismiss()
-        dialog?.dismiss()
-    }
-
-
-    private fun removeImage(){
-        imageFilePath = null
-        prefs.setImgUploadPath("")
-    }
-    private fun imagePickerDialog(){
-        ClassUtilities().hideKeyboard(view, thisContext)
+    fun imagePickerDialog(){
+        ClassUtilities().hideKeyboard(imagePreviewWrapper, thisContext)
 
         val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_choose_gallery, null)
         val builder = AlertDialog.Builder(thisContext)
-        builder.setTitle("Choose Photo From")
+        builder.setTitle("Choose Photo")
         builder.setView(inflater)
         val dialogImgPicker = builder.create()
         dialogImgPicker.show()
@@ -177,14 +97,42 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
         //remove image
         inflater.removeImage.setOnClickListener {
             dialogImgPicker.dismiss()
-//            removeImage()
+            removeImage()
         }
 
     }
 
+    private fun showImageDialog(){
+        ClassUtilities().hideKeyboard(view, thisContext)
+        val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_preview_image, null)
+        val builder = AlertDialog.Builder(thisContext)
+
+        if(imageFilePath!=null){
+            Glide.with(this).load(imageFilePath).into(inflater.dialogPreviewImage)
+        }
+
+        builder.setView(inflater)
+        builder.setPositiveButton("Crop"
+        ) { _, _ ->
+            //actions
+            prefs.setImgUploadPath(imageFilePath!!)
+            gotoCropActivity()
+        }
+        builder.setNeutralButton("Remove"
+        ) { _, _ ->
+            //actions
+            removeImage()
+        }
+
+        val alertDialog = builder.create()
+        alertDialog.show()
+
+    }
+
+
     override fun onResume() {
         super.onResume()
-        if(prefs.getImgUploadPath() !=""&&!prefs.isImageUnderCropping()) {
+        if(prefs.getImgUploadPath() !="") {
             imageFilePath = prefs.getImgUploadPath()
 
             val postPathFile = File(imageFilePath!!)
@@ -197,17 +145,24 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
                 imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
             }
 
-            appendImageToHTML(imageFilePath)
-        }
-    }
+            imagePreviewWrapper.visibility = View.VISIBLE
+            pickImage.visibility = View.GONE
+            Glide.with(this).load(imageFilePath).into(imagePreview)
 
-    private fun appendImageToHTML(imageFilePath: String?) {
-        editor.focusEditor()
-        editor.insertImage(
-            imageFilePath,
-            "${UrlHolder.APP_FOLDER_NAME}", 280
-        )
-        removeImage()
+            is_image_removed = false
+        }else{
+            removeImage()
+        }
+
+    }
+    private fun removeImage(){
+        imagePreview?.setImageDrawable(null)
+        imagePreviewWrapper?.visibility = View.GONE
+
+        pickImage.visibility = View.VISIBLE
+        imageFilePath = null
+        is_image_removed = true
+        prefs.setImgUploadPath("")
     }
 
     private fun compressAndAssignPath(postPathFile:File) :String?{
@@ -229,7 +184,6 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
         return filePath
     }
 
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // save file url in bundle as it will be null on screen orientation
@@ -239,9 +193,9 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        prefs.isImageUnderCropping(true)
 
         if (resultCode == Activity.RESULT_OK) {
+            imagePreviewWrapper.visibility = View.VISIBLE
 
             if (requestCode == REQUEST_TAKE_PHOTO || requestCode == REQUEST_PICK_PHOTO) {
                 if (data != null) {
@@ -253,21 +207,28 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
                     cursor.moveToFirst()
 
                     val columnIndex = cursor.getColumnIndex(filePathColumn[0])
-                    mediaPath = cursor.getString(columnIndex)
+//                    mediaPath = cursor.getString(columnIndex)
 //                    OR
-//                    mediaPath = ClassUtilities().getFilePathFromURI(thisContext,selectedImage)
+                    mediaPath = ClassUtilities().getFilePathFromURI(thisContext,selectedImage)
                     // Set the Image in ImageView for Previewing the Media
                     val options = BitmapFactory.Options()//additional parameter
                     options.inSampleSize = 2//additional parameter
+
+                    imagePreview.setImageBitmap(BitmapFactory.decodeFile(mediaPath,options))
                     cursor.close()
+
 
                     imageFilePath = mediaPath
                 }
 
             } else if (requestCode == CAMERA_PIC_REQUEST) {
                 if (Build.VERSION.SDK_INT <= 21) {
+                    Glide.with(this).load(fileUri).into(imagePreview)
                     imageFilePath = fileUri!!.path
+
                 } else {
+
+                    Glide.with(this).load(mImageFileLocation).into(imagePreview)
                     imageFilePath = mImageFileLocation
 
                 }
@@ -278,6 +239,7 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
 
 
             resizeAndGotoCrop()
+
         } else if (resultCode != Activity.RESULT_CANCELED) {
             Toast.makeText(thisContext, "Sorry, there was an error!", Toast.LENGTH_LONG).show()
         }
@@ -289,14 +251,17 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
         val inputFileInKb = postPathFile.length()/1024//KB like 358BB
         if((imageFilePath == null)||(postPathFile.length() <=3)){
             ClassAlertDialog(thisContext).toast("No Image selected...")
-            removeImage()
+            prefs.setImgUploadPath("")
             return
         }else if((inputFileInKb >= 500)){//more than or equals 500KB
             imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
         }
 
+
         prefs.setImgUploadPath(imageFilePath!!)
         gotoCropActivity()
+
+        pickImage.visibility = View.GONE
     }
     private fun gotoCropActivity(){
         startActivity(Intent(thisContext, ActivityCropImage::class.java))
@@ -383,8 +348,6 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
 
 
     }
-
-
 
 
 

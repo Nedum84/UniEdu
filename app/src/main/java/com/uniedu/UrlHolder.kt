@@ -11,6 +11,5 @@ object  UrlHolder{
     val URL_SEND_JOKE_TEXT = URL_ROOT + "add_joke_text.php"
     public val URL_ADD_JOKE_WITH_IMG = "add_joke_with_image.php"
 
-
 }
 

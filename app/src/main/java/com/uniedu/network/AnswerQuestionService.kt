@@ -1,6 +1,5 @@
 package com.uniedu.network
 
-import com.google.gson.annotations.SerializedName
 import com.uniedu.model.MyDetails
 import okhttp3.RequestBody
 import retrofit2.Call

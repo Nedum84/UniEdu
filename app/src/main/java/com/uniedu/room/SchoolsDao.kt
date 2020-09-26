@@ -17,8 +17,11 @@ interface SchoolsDao {
     suspend fun getById(id: Int): Schools?
 
 
-    @Query("SELECT * FROM $TABLE_SCHOOLS ORDER BY arr_order DESC")
+    @Query("SELECT * FROM $TABLE_SCHOOLS ORDER BY school_name DESC")
     fun getAll(): LiveData<List<Schools>>
+
+    @Query("SELECT * FROM $TABLE_SCHOOLS WHERE school_code LIKE :id OR school_name LIKE :id  ORDER BY school_name DESC")
+    fun getAll(id: String): LiveData<List<Schools>>
 
     @Query("DELETE FROM $TABLE_SCHOOLS")
     fun delete()

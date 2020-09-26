@@ -1,8 +1,11 @@
 package com.uniedu.adapter
 
 
+import android.app.Activity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +14,9 @@ import com.uniedu.databinding.ItemEbookBinding
 import com.uniedu.model.Answers
 import com.uniedu.model.EBooks
 import com.uniedu.model.Schools
+import com.uniedu.ui.fragment.bottomsheet.FragmentAnswerQuestion
+import com.uniedu.ui.fragment.bottomsheet.FragmentAsk
+import com.uniedu.utils.ClassSharedPreferences
 
 
 class AdapterAnswer(private val clickListener: AnswerClickListener) : RecyclerView.Adapter<AdapterAnswer.ViewHolder>() {
@@ -38,6 +44,11 @@ class AdapterAnswer(private val clickListener: AnswerClickListener) : RecyclerVi
     inner class ViewHolder(val binding: ItemAnswerBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Answers) {
+            binding.editor.setEditorFontSize(14)
+            binding.editor.setInputEnabled(false)
+            binding.editor.html = item.answer_body
+
+            binding.editQuestion.visibility =if (ClassSharedPreferences(binding.root.context).getCurUserDetail().user_id == item.answer_from.toInt()) View.VISIBLE else View.GONE
             binding.answer = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -47,9 +58,10 @@ class AdapterAnswer(private val clickListener: AnswerClickListener) : RecyclerVi
 
 }
 //CLICK LISTENER
-class AnswerClickListener(val clickListener: (Answers) -> Unit) {
-    fun onClick(answer: Answers) = clickListener(answer)
-    fun onClickLikeBTN(answer: Answers) = clickListener(answer)
+interface AnswerClickListener {
+    fun onClick(answer: Answers)
+    fun onEditQuestionClick(answer: Answers)
+    fun onClickLikeBTN(answer: Answers)
 }
 
 

@@ -28,14 +28,11 @@ class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionLi
 
     lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
+    lateinit var mBottomNavigation:BottomNavigation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appCrashReport()//SEND APP CRASH REPORTS
-
-//        setContentView(R.layout.activity_main)
-//        DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-//        DataBindingUtil.setContentView(this, R.layout.activity_main) as ActivityMainBinding
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.apply {
             lifecycleOwner = this@MainActivity
@@ -71,20 +68,23 @@ class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionLi
             }
         }
 
-
-//        val f = FragmentAsk.newInstance(Questions())
-        FragmentAsk().apply {
-//            show(supportFragmentManager, tag)
-        }
-//        f.apply {
-//            show(supportFragmentManager, tag)
-//        }
-
         val myDetails = MyDetails(1,"","","","","","42","1")
         ClassSharedPreferences(this).setCurUserDetail(Gson().toJson(myDetails))
 
         initializeBottomNavigation(savedInstanceState)
         mBottomNavigation.menuItemSelectionListener = this
+    }
+
+    private fun initializeBottomNavigation(savedInstanceState: Bundle?) {
+        if (null == savedInstanceState) {
+            mBottomNavigation = findViewById(R.id.bottomNavigation)
+            mBottomNavigation.setDefaultSelectedIndex(0)
+//            val provider: BadgeProvider? = mBottomNavigation.badgeProvider
+//            provider?.show(R.id.bbn_item3)
+//            provider?.show(R.id.bbn_item4)
+//            provider?.remove(R.id.bbn_item2)
+
+
 
 
 //        mBottomNavigation.menuItemSelectionListener = object :BottomNavigation.OnMenuItemSelectionListener{
@@ -97,24 +97,12 @@ class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionLi
 //            }
 //
 //        }
-    }
-    lateinit var mBottomNavigation:BottomNavigation
-
-    protected fun initializeBottomNavigation(savedInstanceState: Bundle?) {
-        if (null == savedInstanceState) {
-            mBottomNavigation = findViewById(R.id.bottomNavigation)
-            mBottomNavigation.setDefaultSelectedIndex(0)
-//            val provider: BadgeProvider? = mBottomNavigation.badgeProvider
-//            provider?.show(R.id.bbn_item3)
-//            provider?.show(R.id.bbn_item4)
-//            provider?.remove(R.id.bbn_item2)
         }
     }
 
 
 
     override fun onSupportNavigateUp(): Boolean {
-//        val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
@@ -130,25 +118,21 @@ class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionLi
     override fun onMenuItemSelect(itemId: Int, position: Int, fromUser: Boolean) {
         when(itemId){
             R.id.bbn_home->{
-                navController.popBackStack()
-//                navController.navigate(R.id.nav_home)
+                navController.popBackStack(R.id.nav_home, false)
             }
             R.id.bbn_video ->{
-//                navController.navigate(FragmentHomeDirections.actionNavHomeToFragmentTopicVideo())
-
                 navNavigate(R.id.fragmentTopicVideo)
             }
             R.id.bbn_ebook ->{
-                navNavigate(R.id.fragmentAsk)
+                navNavigate(R.id.fragmentEBook)
             }
             R.id.bbn_qa ->{
-//                findNavController(R.id.nav_host_fragment).navigate(FragmentHomeDirections.actionNavHomeToFragmentQuestion())
                 navNavigate(R.id.fragmentQuestion)
             }
         }
     }
 
-    fun navNavigate(itemId: Int){
+    private fun navNavigate(itemId: Int){
         try {
             if (navController.currentDestination!!.id != R.id.nav_home)navController.popBackStack()
             navController.navigate(itemId)

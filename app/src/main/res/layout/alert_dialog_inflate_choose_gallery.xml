@@ -72,10 +72,12 @@
             android:text="Camera"/>
 
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#ccc"/>
+        android:background="#ccc"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/removeImage"
@@ -84,24 +86,26 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:paddingStart="12dp"
-        android:paddingLeft="12dp">
+        android:paddingLeft="12dp"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/design_circle_border2"
-            app:srcCompat="@drawable/ic_delete_black_24dp"
-            tools:ignore="ContentDescription"
             android:padding="8dp"
-            app:tint="@color/colorWhite" />
+            app:srcCompat="@drawable/ic_delete_black_24dp"
+            app:tint="@color/colorWhite"
+            tools:ignore="ContentDescription" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#222"
-            android:textSize="18sp"
             android:padding="10dp"
+            android:text="Remove Photo"
             android:textAlignment="center"
-            android:text="Remove Photo"/>
+            android:textColor="#222"
+            android:textSize="18sp" />
 
     </LinearLayout>
 </LinearLayout>

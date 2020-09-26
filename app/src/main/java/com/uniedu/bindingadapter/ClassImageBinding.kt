@@ -7,12 +7,11 @@ import com.uniedu.R
 
 object ClassImageBinding {
 
-    val sampleImage = R.drawable.test
     //For Image view Adapter
     @JvmStatic // add this line !!
     @BindingAdapter("imagePath")
-    fun bindImageFromUrl(view: ImageView, imgUrlString: String){
-        if (imgUrlString.isNotEmpty()){
+    fun bindImageFromUrl(view: ImageView, imgUrlString: String?  = ""){
+        if (!imgUrlString.isNullOrEmpty()){
             Glide.with(view.context)
                 .load(imgUrlString)
                 .into(view)

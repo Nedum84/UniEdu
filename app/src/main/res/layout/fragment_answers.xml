@@ -39,14 +39,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintGuide_begin="8dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            app:layout_constraintGuide_end="8dp" />
 
         <ScrollView
             android:layout_width="0dp"
@@ -54,7 +54,8 @@
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toStartOf="@+id/guideline7"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            android:scrollbars="none">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -68,7 +69,7 @@
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="15dp"
                     app:layout_constraintStart_toEndOf="@+id/course_code"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21"
+                    app:layout_constraintTop_toBottomOf="@+id/editor"
                     app:srcCompat="@drawable/ic_dot"
                     app:tint="@color/colorBlack"
                     tools:ignore="ContentDescription" />
@@ -86,11 +87,11 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/imageView9"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
+                    app:layout_constraintTop_toBottomOf="@+id/editor" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imageView8"
-                    imagePathPhoto="@{viewModel.curQuestion.question_uploader_photo}"
+                    imagePathPhoto="@{viewModel.curQuestion.question_from_photo}"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginTop="8dp"
@@ -99,7 +100,7 @@
                     app:civ_border_color="#70ffffff"
                     app:civ_border_width="1dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
+                    app:layout_constraintTop_toBottomOf="@+id/editor" />
 
                 <TextView
                     android:id="@+id/course_code"
@@ -108,46 +109,27 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="10dp"
                     android:hint="Emeka Paul"
-                    android:text="@{viewModel.curQuestion.question_uploader_name}"
+                    android:text="@{viewModel.curQuestion.question_from_name}"
                     android:textAllCaps="true"
                     android:textColor="@color/colorBlack"
                     android:textColorHint="@color/colorBlack"
                     android:textSize="10sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/imageView8"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21" />
+                    app:layout_constraintTop_toBottomOf="@+id/editor" />
 
-                <TextView
-                    android:id="@+id/textView21"
+                <jp.wasabeef.richeditor.RichEditor
+                    android:id="@+id/editor"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:hint="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                    android:maxLines="3"
-                    android:text="@{viewModel.curQuestion.question_body}"
-                    android:textColor="@color/colorPurpleDark"
-                    android:textColorHint="@color/colorPurpleDark"
+                    android:layout_marginTop="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <!--        android:visibility='@{TextUtils.equals(question.question_no_of_answer,"0")?View.GONE: View.VISIBLE}'-->
                 <!--        android:visibility='@{TextUtils.isEmpty(question.question_no_of_answer)?View.GONE: View.VISIBLE}'-->
 
-
-                <ImageView
-                    android:id="@+id/imageView10"
-                    imagePath="@{viewModel.curQuestion.question_image_path}"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/test"
-                    android:visibility="@{TextUtils.isEmpty(viewModel.curQuestion.question_image_path) ? View.GONE : View.VISIBLE}"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription"
-                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
                 <TextView
                     android:id="@+id/textView16"
@@ -176,11 +158,26 @@
                     android:id="@+id/imageView15"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/border_radius_no_of_answers"
                     android:src="@drawable/ic_baseline_bookmark"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView21"
+                    app:layout_constraintTop_toBottomOf="@+id/editor"
                     tools:ignore="ContentDescription" />
+<!--                app:tint="@{viewModel.isQuestionBookmarked()}"-->
+
+                <ImageView
+                    android:id="@+id/edit_question"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="16dp"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView15"
+                    app:layout_constraintTop_toBottomOf="@+id/editor"
+                    app:srcCompat="@drawable/ic_outline_brush_24"
+                    tools:ignore="ContentDescription"
+                    android:visibility="@{viewModel.isMyQuestion()}"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
@@ -188,7 +185,7 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:background="@color/colorAccentLight"
             android:orientation="horizontal"
             android:padding="4dp"
@@ -209,7 +206,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:padding="6dp"
                     android:text="ANSWER"
                     android:textAlignment="center"
                     android:textColor="@color/colorWhite"

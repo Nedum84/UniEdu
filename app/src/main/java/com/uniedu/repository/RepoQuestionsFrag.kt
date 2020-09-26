@@ -2,7 +2,6 @@ package com.uniedu.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.uniedu.model.Courses
 import com.uniedu.model.QSearchParam
 import com.uniedu.model.Questions
 import com.uniedu.network.RetrofitConstantGET
@@ -15,7 +14,6 @@ import retrofit2.http.Query
 
 class RepoQuestionsFrag(private val database: DatabaseRoom) {
 
-
     val questions : LiveData<List<Questions>> = database.questionsDao.getAll()
 
     val feedBack:LiveData<String> get() = _feedBack
@@ -26,12 +24,16 @@ class RepoQuestionsFrag(private val database: DatabaseRoom) {
     suspend fun getQuestions(qSearchParam: QSearchParam){
         val questionService = RetrofitConstantGET.retrofit
             .create(QuestionService::class.java)
-            .getQuestionsAsync("${qSearchParam.school_id}","${qSearchParam.course_id}","${qSearchParam.answered}","${qSearchParam.answered}")
+            .getQuestionsAsync(
+                "${qSearchParam.school_id}",
+                "${qSearchParam.course_id}",
+                "${qSearchParam.answered}",
+                "${qSearchParam.start_from}")
 
         withContext(Dispatchers.IO) {
             try {
                 val listResult = questionService.await()
-                if (qSearchParam.last_q_id==0){
+                if (qSearchParam.start_from == 0){
                     database.questionsDao.deleteNotMySchools(qSearchParam.school_id)
                     database.questionsDao.upSert(listResult)
                 }else{
@@ -56,13 +58,15 @@ class RepoQuestionsFrag(private val database: DatabaseRoom) {
     }
 }
 
+
 interface QuestionService {
 
-    @GET("get_rape_detail.php")
+    @GET("add_question.php")
     fun getQuestionsAsync(
         @Query("school_id") school_id: String,
         @Query("course_id") course_id: String,
         @Query("answered") answered: String,
-        @Query("last_q_id") last_q_id: String
+        @Query("start_from") start_from: String,
+        @Query("record_per_page") record_per_page: String = "10"
     ): Deferred<List<Questions>>
 }

@@ -12,6 +12,9 @@ interface QuestionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun upSert(list: List<Questions>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun upSertSingle(list: Questions)
+
 
     @Query("SELECT * from $TABLE_QUESTIONS WHERE question_id = :id")
     suspend fun getById(id: Int): Questions

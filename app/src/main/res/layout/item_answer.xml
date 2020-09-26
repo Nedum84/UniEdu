@@ -12,14 +12,16 @@
         <variable
             name="clickListener"
             type="com.uniedu.adapter.AnswerClickListener" />
+        <variable
+            name="my_detail"
+            type="com.uniedu.model.MyDetails" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:padding="8dp"
-        android:onClick="@{()->clickListener.onClick(answer)}">
+        android:onClick="@{()->clickListener.onClick(answer)}"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/imageView9"
@@ -28,7 +30,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="15dp"
             app:layout_constraintStart_toEndOf="@+id/course_code"
-            app:layout_constraintTop_toBottomOf="@+id/textView21"
+            app:layout_constraintTop_toBottomOf="@+id/editor"
             app:srcCompat="@drawable/ic_dot"
             app:tint="@color/colorBlack"
             tools:ignore="ContentDescription" />
@@ -46,20 +48,20 @@
             android:textSize="10sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/imageView9"
-            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+            app:layout_constraintTop_toBottomOf="@+id/editor" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageView8"
+            imagePathPhoto="@{answer.answer_from_photo}"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/test"
-            imagePathPhoto="@{answer.answer_uploader_photo}"
             app:civ_border_color="#70ffffff"
             app:civ_border_width="1dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+            app:layout_constraintTop_toBottomOf="@+id/editor" />
 
         <TextView
             android:id="@+id/course_code"
@@ -68,28 +70,37 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:hint="Emeka Paul"
-            android:text="@{answer.answer_uploader_name}"
+            android:text="@{answer.answer_from_name}"
             android:textAllCaps="true"
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorBlack"
             android:textSize="10sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/imageView8"
-            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+            app:layout_constraintTop_toBottomOf="@+id/editor" />
 
-        <TextView
-            android:id="@+id/textView21"
-            android:layout_width="0dp"
+        <!--        <TextView-->
+        <!--            android:id="@+id/textView21"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:ellipsize="end"-->
+        <!--            android:hint="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
+        <!--            android:maxLines="3"-->
+        <!--            android:text="@{answer.answer_body}"-->
+        <!--            android:textColor="@color/colorPurpleDark"-->
+        <!--            android:textColorHint="@color/colorPurpleDark"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            android:visibility="gone"/>-->
+
+        <jp.wasabeef.richeditor.RichEditor
+            android:id="@+id/editor"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:hint="Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            android:maxLines="3"
-            android:text="@{answer.answer_body}"
-            android:textColor="@color/colorPurpleDark"
-            android:textColorHint="@color/colorPurpleDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView10" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView19"
@@ -98,6 +109,7 @@
             android:layout_marginTop="4dp"
             android:background="@drawable/border_radius_no_of_answers"
             android:hint=" 2"
+            android:onClick="@{()->clickListener.onClickLikeBTN(answer)}"
             android:padding="2dp"
             android:paddingStart="6dp"
             android:paddingEnd="8dp"
@@ -105,27 +117,36 @@
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorBlack"
             android:textStyle="bold"
-            android:visibility='@{answer.answer_no_of_like.equals("0")?View.GONE: View.VISIBLE}'
-            android:onClick="@{()->clickListener.onClickLikeBTN(answer)}"
             app:drawableStartCompat="@drawable/ic_baseline_favorite"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView21" />
+            app:layout_constraintTop_toBottomOf="@+id/editor" />
+<!--        android:visibility='@{answer.answer_no_of_like.equals("0")?View.GONE: View.VISIBLE}'-->
+
+        <View
+            android:id="@+id/view4"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorBlueSky"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView8" />
+
+        <ImageView
+            android:id="@+id/edit_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/textView19"
+            app:layout_constraintTop_toBottomOf="@+id/editor"
+            app:srcCompat="@drawable/ic_outline_brush_24"
+            tools:ignore="ContentDescription"
+            android:onClick="@{()->clickListener.onEditQuestionClick(answer)}"/>
         <!--        android:visibility='@{TextUtils.equals(question.question_no_of_answer,"0")?View.GONE: View.VISIBLE}'-->
         <!--        android:visibility='@{TextUtils.isEmpty(question.question_no_of_answer)?View.GONE: View.VISIBLE}'-->
 
 
-        <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/test"
-            android:visibility="@{TextUtils.isEmpty(answer.answer_image_path) ? View.GONE : View.VISIBLE}"
-            imagePath="@{answer.answer_image_path}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@tools:sample/backgrounds/scenic"
-            tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

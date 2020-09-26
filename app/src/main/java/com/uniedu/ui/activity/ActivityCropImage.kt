@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import com.isseiaoki.simplecropview.CropImageView
 import com.uniedu.R
+import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassSharedPreferences
 import com.uniedu.utils.ClassUtilities
@@ -50,8 +51,7 @@ class ActivityCropImage : AppCompatActivity(), View.OnClickListener {
         thisContext = this
         prefs = ClassSharedPreferences(thisContext)
         progresDialog = ClassProgressDialog(
-            thisContext,
-            "Saving, Please Wait..."
+            thisContext,"Saving, Please Wait..."
         )
         if(prefs.getImgUploadPath() !=""){
             mSourceUri = Uri.fromFile(File(prefs.getImgUploadPath()))
@@ -116,6 +116,7 @@ class ActivityCropImage : AppCompatActivity(), View.OnClickListener {
     }
     override fun finish() {
         super.finish()
+        prefs.isImageUnderCropping(false)
         overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_right)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

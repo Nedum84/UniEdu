@@ -1,13 +1,17 @@
 package com.uniedu.model
 
 import android.os.Parcelable
+import android.text.Spanned
 import android.widget.TextView
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.uniedu.extension.getImgPaths
+import com.uniedu.extension.removeImgTags
 import com.uniedu.room.DatabaseRoom
 import com.uniedu.room.TableNames
 import com.uniedu.utils.ClassDateAndTime
+import com.uniedu.utils.ClassHtmlFormater
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.*
 
@@ -21,14 +25,14 @@ class Questions(
     val question_body:String,
     @ColumnInfo(name = "question_image_path")
     val question_image_path:String,
-    @ColumnInfo(name = "question_uploader")
-    val question_uploader:String,
-    @ColumnInfo(name = "question_uploader_photo")
-    val question_uploader_photo:String,
+    @ColumnInfo(name = "question_from")
+    val question_from:String,
+    @ColumnInfo(name = "question_from_photo")
+    val question_from_photo:String,
+    @ColumnInfo(name = "question_from_name")
+    val question_from_name:String,
     @ColumnInfo(name = "question_no_of_answer")
     val question_no_of_answer:String,
-    @ColumnInfo(name = "question_uploader_name")
-    val question_uploader_name:String,
     @ColumnInfo(name = "question_date")
     val question_date:String,
     @ColumnInfo(name = "course_id")
@@ -36,7 +40,7 @@ class Questions(
     @ColumnInfo(name = "school_id")
     val school_id:String,
     @ColumnInfo(name = "is_bookmarked")
-    val is_bookmarked:Boolean = false
+    var is_bookmarked:Boolean = false
 ):Parcelable{
 
     fun courseCode(db:DatabaseRoom) = runBlocking{
@@ -62,19 +66,29 @@ class Questions(
 //
 //    }
 
-    fun questionBody():String{
-        return if (question_image_path.isNotEmpty()){
-            val body = if (question_body.isNotEmpty()) ": $question_body" else ""
+    fun questionBody():Spanned{
+        val imgPaths = question_body.getImgPaths()
+        var qBody = question_body.removeImgTags()
+
+
+        qBody =  if (imgPaths.isNotEmpty()){
+            val body = if (qBody.isNotEmpty()) ": $qBody" else ""
             "(Image) $body"
         }else{
-            question_body
+            qBody
         }
+        return ClassHtmlFormater().fromHtml(qBody)
 
+//        for (i in imgPaths){
+//            qBody = qBody.replace(i,"")
+//        }
+//        qBody.replace("<img src=","")
+//        qBody.replace("<img src=","")
     }
 
-    fun posterPhoto():String{
 
-        return question_uploader_photo
+    fun posterPhoto():String{
+        return question_from_photo
     }
 
     fun time() = ClassDateAndTime().checkDateTimeFirst(question_date.toLong())

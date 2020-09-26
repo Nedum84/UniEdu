@@ -12,6 +12,7 @@ class  ClassSharedPreferences(val context: Context?){
     private val PREFERENCE_ACCESS_LEVEL= "access_level"
     private val PREFERENCE_OPENING_FOR_THE_FIRST_TIME= "opening_for_the_first_time"
     private val PREFERENCE_CUR_IMG_UPLOAD_PATH = "cur_image_upload_path"
+    private val PREFERENCE_CUR_IMG_UNDER_CROPPING = "cur_image_under_crop"
     private val PREFERENCE_SET_COURSE_QUERY = "set_course_query"
 
 
@@ -57,6 +58,15 @@ class  ClassSharedPreferences(val context: Context?){
     }
     fun getImgUploadPath():String{
         return  preference.getString(PREFERENCE_CUR_IMG_UPLOAD_PATH,"")!!
+    }
+    //set true if image is under under cropping to avoid duplicate of two image insertion to the view
+    fun isImageUnderCropping(url:Boolean){
+        val editor = preference.edit()
+        editor.putBoolean(PREFERENCE_CUR_IMG_UNDER_CROPPING,url)
+        editor.apply()
+    }
+    fun isImageUnderCropping():Boolean{
+        return  preference.getBoolean(PREFERENCE_CUR_IMG_UNDER_CROPPING,false)
     }
 
     //set searching course query

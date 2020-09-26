@@ -63,7 +63,7 @@ class RepoCourses(private val database: DatabaseRoom) {
 
 interface CourseService {
 
-    @GET("get_courses.php")
+    @GET("add_course.php")
     fun getCoursesAsync(
         @Query("school_id") school_id: String
     ): Deferred<List<Courses>>

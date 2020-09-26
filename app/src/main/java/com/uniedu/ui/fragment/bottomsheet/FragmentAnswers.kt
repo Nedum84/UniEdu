@@ -4,11 +4,13 @@ import android.app.Dialog
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.Parcelable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -19,6 +21,8 @@ import com.uniedu.R
 import com.uniedu.adapter.AdapterAnswer
 import com.uniedu.adapter.AnswerClickListener
 import com.uniedu.databinding.FragmentAnswersBinding
+import com.uniedu.extension.makeFullScreen
+import com.uniedu.extension.toast
 import com.uniedu.model.Answers
 import com.uniedu.model.Questions
 import com.uniedu.room.DatabaseRoom
@@ -45,6 +49,27 @@ class FragmentAnswer : BaseFragmentBottomSheet() {
         question = arguments?.getParcelable(QUESTION)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+
+        binding.answerQuestion.setOnClickListener {
+            requireActivity().let {
+                FragmentAnswerQuestion.newInstance(question!!).apply {
+                    show(it.supportFragmentManager, tag)
+                }
+            }
+        }
+
+        binding.editQuestion.setOnClickListener {
+            requireActivity().let {
+                FragmentAsk.newInstance(question!!).apply {
+                    show(it.supportFragmentManager, tag)
+                }
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_answers, container, false)
 
@@ -58,25 +83,25 @@ class FragmentAnswer : BaseFragmentBottomSheet() {
             viewModel = fAnsModel
         }
 
-//        binding.answerQuestion.setOnClickListener {
-//            requireActivity().let {
-//                FragmentAnswerQuestion.newInstance(question!!).apply {
-//                    show(it.supportFragmentManager, tag)
-//                }
-//            }
-//        }
-        binding.answerQuestion.setOnClickListener {
-            requireActivity().let {
-                FragmentEBookDetail().apply {
-                    show(it.supportFragmentManager, tag)
+        binding.editor.setEditorFontSize(16)
+        binding.editor.setInputEnabled(false)
+        binding.editor.html = question?.question_body
+
+        ADAPTER = AdapterAnswer(object : AnswerClickListener{
+            override fun onClick(answer: Answers) {}
+            override fun onEditQuestionClick(answer: Answers) {
+                requireActivity().let {
+                    FragmentAnswerQuestion.newInstance(question!!, answer).apply {
+                        show(it.supportFragmentManager, tag)
+                    }
                 }
             }
-        }
 
-
-        ADAPTER = AdapterAnswer(AnswerClickListener {
-            ClassAlertDialog(application).toast("${it.answer_body}...!!!")
+            override fun onClickLikeBTN(answer: Answers) {
+                fAnsModel.submitLike(answer)
+            }
         })
+
         binding.recyclerAnswers.apply {
             adapter = ADAPTER
             layoutManager= LinearLayoutManager(activity)
@@ -109,9 +134,9 @@ class FragmentAnswer : BaseFragmentBottomSheet() {
                 when(fb){
                     "network_success"->{}
                     "network_error"->{
-                        if (answers.isEmpty()){
-                            //show no network tag
-                        }
+//                        if (answers.isNullOrEmpty()){
+//                            //show no network tag
+//                        }
                     }
                 }
             }
@@ -125,13 +150,7 @@ class FragmentAnswer : BaseFragmentBottomSheet() {
 
     //FULL SCREEN DIALOG
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return BottomSheetDialog(requireContext(), theme).apply {
-            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            behavior.state = BottomSheetBehavior.STATE_EXPANDED
-//            behavior.peekHeight = PEEK_HEIGHT_AUTO
-//            behavior.peekHeight = Resources.getSystem().displayMetrics.heightPixels
-            behavior.peekHeight = Resources.getSystem().displayMetrics.heightPixels-200
-        }
+        return context?.makeFullScreen(this)!!
     }
 
     companion object {

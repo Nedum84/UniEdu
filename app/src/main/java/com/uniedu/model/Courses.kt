@@ -20,7 +20,7 @@ class Courses (
     @ColumnInfo(name = "course_title")
     var course_title: String,
     @ColumnInfo(name = "course_banner")
-    var course_banner: String,
+    var course_banner: String = "",
     @ColumnInfo(name = "course_semester")
     var course_semester: String,
     @ColumnInfo(name = "course_no_of_topics")

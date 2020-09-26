@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="12dp"
         tools:context=".ui.fragment.bottomsheet.FragmentAsk">
 
         <androidx.appcompat.widget.Toolbar
@@ -30,20 +31,6 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="ECE 334"
             app:titleTextColor="@color/colorPurpleDark" />
-
-        <TextView
-            android:id="@+id/submitQBTN"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="PUBLISH"
-            android:textColor="@color/colorPurpleDark"
-            android:textColorHint="@color/colorPurpleDark"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/toolbar"
-            app:layout_constraintEnd_toEndOf="@+id/toolbar"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline14"
@@ -63,99 +50,55 @@
         <LinearLayout
             android:id="@+id/inputWrapper"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/border_no_radius_grey"
             android:orientation="vertical"
             android:padding="10dp"
+            app:layout_constraintBottom_toTopOf="@+id/addQCourse"
             app:layout_constraintEnd_toStartOf="@+id/guideline14"
             app:layout_constraintStart_toStartOf="@+id/guideline15"
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-            <EditText
-                android:id="@+id/questionBody"
+            <jp.wasabeef.richeditor.RichEditor
+                android:id="@+id/editor"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:drawablePadding="5dp"
-                android:hint="Enter your question..."
-                android:text='@{TextUtils.isEmpty(question.question_body)?"":question.question_body}'
-                android:maxLines="20"
-                android:gravity="top"
-                android:minLines="2"
-                android:textColor="#777"
-                android:textColorHint="#c4c4c4"
-                android:textSize="16sp"
-                tools:ignore="Autofill,TextFields" />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/imagePreviewWrapper"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline15"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper">
-
-            <ImageView
-                android:id="@+id/imagePreview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#10000000"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/ic_launcher_background"
-                tools:ignore="ContentDescription" />
-
-            <ImageView
-                android:id="@+id/removeImageBTN"
-                android:layout_width="18dp"
-                android:layout_height="18dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/border_circle_grey3"
-                android:padding="3dp"
-                app:srcCompat="@drawable/ic_baseline_close"
-                app:tint="@color/colorPurpleDark"
-                tools:ignore="ContentDescription" />
-
-        </RelativeLayout>
-
-        <com.github.florent37.shapeofview.shapes.DottedEdgesCutCornerView
-            android:id="@+id/pickImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="12dp"
-            app:layout_constraintStart_toEndOf="@+id/imagePreviewWrapper"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
-            app:shape_dot_radius="2dp"
-            app:shape_dot_spacing="1dp"
-            app:shape_edge_position="right|left|top|bottom">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#D1D1D1"
-                android:gravity="center"
-                android:text="SELECT IMAGE" />
-        </com.github.florent37.shapeofview.shapes.DottedEdgesCutCornerView>
-
 
         <TextView
             android:id="@+id/addQCourse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
             android:background="@drawable/border_radius_black"
-            android:drawableEnd="@drawable/ic_baseline_arrow_drop_down"
             android:padding="6dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:text="SELECT COURSE"
             android:textColor="@color/colorWhite"
+            app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down"
             app:drawableTint="@color/colorWhite"
-            app:layout_constraintEnd_toStartOf="@+id/guideline14"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper" />
+            app:layout_constraintBottom_toTopOf="@+id/include4"
+            app:layout_constraintStart_toStartOf="@+id/guideline15" />
 
+        <include
+            android:id="@+id/include4"
+            layout="@layout/editor_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/submitQBTN"
+            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+
+        <ImageView
+            android:id="@+id/submitQBTN"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:background="@drawable/design_circle_border2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:srcCompat="@drawable/ic_baseline_send"
+            tools:ignore="ContentDescription" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

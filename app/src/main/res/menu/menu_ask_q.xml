@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_undo"
+        android:title="Undo"
+        android:icon="@drawable/z_editor_undo"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction,HardcodedText" />
+    <item
+        android:id="@+id/action_redo"
+        android:title="Redo"
+        android:icon="@drawable/z_editor_redo"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction,HardcodedText" />
+    <item
+        android:id="@+id/action_txt_color"
+        android:title="Redo"
+        android:icon="@drawable/z_editor_color"
+        app:showAsAction="always"
+        tools:ignore="AlwaysShowAction,HardcodedText" />
+
+
+</menu>

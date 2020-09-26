@@ -6,6 +6,7 @@ import com.uniedu.Event
 import com.uniedu.model.*
 import com.uniedu.repository.RepoQuestionsFrag
 import com.uniedu.room.DatabaseRoom
+import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -17,7 +18,8 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
     private val viewModelJob = SupervisorJob()//OR Job()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    private val schoolId = 56
+
+    private val schoolId = ClassSharedPreferences(application).getCurUserDetail().user_school
     private val questionsRepo = RepoQuestionsFrag(database)
 
 
@@ -28,7 +30,7 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
     init {
         refreshQuestion()
     }
-    fun refreshQuestion(qSearchParam: QSearchParam = QSearchParam(schoolId)){
+    fun refreshQuestion(qSearchParam: QSearchParam = QSearchParam(schoolId.toInt())){
         viewModelScope.launch {
             questionsRepo.getQuestions(qSearchParam)
         }
@@ -41,7 +43,7 @@ class ModelQuestionsFrag(application: Application) : AndroidViewModel(applicatio
     //Current Question
     val qSearchParam: LiveData<Event<QSearchParam>> get() = _qSearchParam
     private val _qSearchParam = MutableLiveData<Event<QSearchParam>>().apply {
-        value = Event(QSearchParam(schoolId))
+        value = Event(QSearchParam(schoolId.toInt()))
     }
     fun qSearchQuery(data: QSearchParam) {
         _qSearchParam.value = Event(data)

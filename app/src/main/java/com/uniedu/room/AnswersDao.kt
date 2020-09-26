@@ -9,11 +9,11 @@ import com.uniedu.room.TableNames
 interface AnswersDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upSertAnswer(list: List<Answers>)
+    suspend fun upSert(list: List<Answers>)
 
 
-    @Query("SELECT * from ${TableNames.TABLE_ANSWERS} WHERE answer_id = :id")
-    fun getAnswerById(id: Long): Answers?
+    @Query("SELECT * from ${TableNames.TABLE_ANSWERS} WHERE question_id = :id")
+    fun getAnswerById(id: Int): LiveData<List<Answers>>
 
 
     @Query("SELECT * FROM ${TableNames.TABLE_ANSWERS} ORDER BY answer_id DESC")

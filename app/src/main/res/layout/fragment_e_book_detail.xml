@@ -10,25 +10,44 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior=".utils.LockableBottomSheetBehavior">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@drawable/border_toolbar"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:navigationIcon="@drawable/ic_baseline_close_rotate"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title=""
+            app:titleTextColor="@color/colorPurpleDark" />
 
         <include
             android:id="@+id/include4"
             layout="@layout/editor_toolbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintEnd_toStartOf="@+id/publish"
             app:layout_constraintStart_toStartOf="@+id/guideline16" />
 
         <jp.wasabeef.richeditor.RichEditor
             android:id="@+id/editor"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:background="@drawable/border_no_radius_grey"
             app:layout_constraintBottom_toTopOf="@+id/include4"
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
             app:layout_constraintStart_toStartOf="@+id/guideline16"
-            app:layout_constraintTop_toBottomOf="@+id/preview" />
+            app:layout_constraintTop_toBottomOf="@+id/question_holder" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
@@ -44,14 +63,57 @@
             android:orientation="vertical"
             app:layout_constraintGuide_begin="8dp" />
 
-        <TextView
-            android:id="@+id/preview"
+
+        <LinearLayout
+            android:id="@+id/question_holder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Preview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical"
+            android:padding="6dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toStartOf="@+id/guideline16"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tools:ignore="UseCompoundDrawables">
+            <jp.wasabeef.richeditor.RichEditor
+                android:id="@+id/preViewQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+            <LinearLayout
+                android:id="@+id/view_question"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:id="@+id/hideViewQuestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="view question"
+                    android:textColor="@color/colorPurpleDark"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:id="@+id/dropDownToggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_expand_more"
+                    tools:ignore="ContentDescription"
+                    app:tint="@color/colorPurpleDark" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/publish"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/design_circle_border2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintTop_toBottomOf="@+id/editor"
+            app:srcCompat="@drawable/ic_baseline_send"
+            tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

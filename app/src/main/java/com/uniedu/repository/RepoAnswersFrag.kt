@@ -1,9 +1,11 @@
 package com.uniedu.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.uniedu.Event
 import com.uniedu.model.Answers
+import com.uniedu.model.Courses
 import com.uniedu.model.Questions
 import com.uniedu.network.RetrofitConstantGET
 import com.uniedu.room.DatabaseRoom
@@ -15,7 +17,7 @@ import retrofit2.http.Query
 
 class RepoAnswersFrag(private val database: DatabaseRoom, private val question: Questions) {
 
-    val answers: LiveData<List<Answers>> = database.answersDao().getAllAnswer()
+    val answers: LiveData<List<Answers>> = database.answersDao().getAnswerById(question.question_id)
     val feedBack:LiveData<Event<String>> get() = _feedBack
     private val _feedBack  = MutableLiveData<Event<String>>().apply {
         value = Event("success")
@@ -30,18 +32,31 @@ class RepoAnswersFrag(private val database: DatabaseRoom, private val question: 
             try {
                 val listResult = answerService.await()
 //                database.answersDao().delete()
-                database.answersDao().upSertAnswer(listResult)
+                database.answersDao().upSert(listResult)
             } catch (e: Exception) {
                 e.printStackTrace()
-                _feedBack.value = Event("network_error")
+                _feedBack.postValue(Event("network_error"))
             }
         }
     }
+
+
+    suspend fun addAnswer(answers: List<Answers>){
+        withContext(Dispatchers.IO){
+            try {
+                database.answersDao().upSert(answers)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+
 }
 
 interface AnswerService {
 
-    @GET("get_rape_detail.php")
+    @GET("add_answer.php")
     fun getAnswersAsync(
         @Query("school_id") school_id: String,
         @Query("question_id") question_id: String

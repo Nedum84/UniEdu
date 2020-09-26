@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.uniedu.databinding.ItemQuestionBinding
+import com.uniedu.extension.getImgPaths
+import com.uniedu.extension.removeImgTags
 import com.uniedu.model.Courses
 import com.uniedu.model.Questions
 import com.uniedu.room.DatabaseRoom

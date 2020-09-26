@@ -86,9 +86,9 @@ class FragmentQuestion : BaseFragment() {
             when(it){
                 "network_success"->{}
                 "network_error"->{
-                    if (questions.isEmpty()){
-                        //show no network tag
-                    }
+//                    if (questions.isEmpty()){
+//                        //show no network tag
+//                    }
                 }
             }
         })

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<HorizontalScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,13 +19,20 @@
             android:id="@+id/action_undo"
             style="@style/editorToolbar"
             android:src="@drawable/z_editor_undo"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_redo"
             style="@style/editorToolbar"
             android:src="@drawable/z_editor_redo"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/action_insert_image"
+            style="@style/editorToolbar"
+            android:src="@drawable/z_editor_icon_image" />
 
         <ImageButton
             android:id="@+id/action_bold"
@@ -62,70 +70,82 @@
         <Button
             android:id="@+id/action_heading1"
             style="@style/editorToolbar"
-            android:text="H1" />
+            android:text="H1"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/action_heading2"
             style="@style/editorToolbar"
-            android:text="H2" />
+            android:text="H"/>
 
         <Button
             android:id="@+id/action_heading3"
             style="@style/editorToolbar"
-            android:text="H3" />
+            android:text="H3"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/action_heading4"
             style="@style/editorToolbar"
-            android:text="H4" />
+            android:text="H4"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/action_heading5"
             style="@style/editorToolbar"
-            android:text="H5" />
+            android:text="H5"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/action_heading6"
             style="@style/editorToolbar"
-            android:text="H6" />
+            android:text="H6"
+            android:visibility="gone"/>
 
 
         <ImageButton
             android:id="@+id/action_txt_color"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_colors" />
+            android:src="@drawable/z_editor_colors"
+            android:visibility="gone"/>
 
 
         <ImageButton
             android:id="@+id/action_bg_color"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_color" />
+            android:src="@drawable/z_editor_color"
+            android:visibility="gone"/>
 
 
         <ImageButton
             android:id="@+id/action_indent"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_icon_indent" />
+            android:src="@drawable/z_editor_icon_indent"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_outdent"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_icon_outdent" />
+            android:src="@drawable/z_editor_icon_outdent"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_align_left"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_align_left" />
+            android:src="@drawable/z_editor_align_left"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_align_center"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_align_center" />
+            android:src="@drawable/z_editor_align_center"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_align_right"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_align_right" />
+            android:src="@drawable/z_editor_align_right"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_insert_bullets"
@@ -135,32 +155,33 @@
         <ImageButton
             android:id="@+id/action_insert_numbers"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_icon_numbered_list" />
+            android:src="@drawable/z_editor_icon_numbered_list"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_blockquote"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_ic_blockquote" />
+            android:src="@drawable/z_editor_ic_blockquote"
+            android:visibility="gone"/>
 
-        <ImageButton
-            android:id="@+id/action_insert_image"
-            style="@style/editorToolbar"
-            android:src="@drawable/z_editor_icon_image" />
 
         <ImageButton
             android:id="@+id/action_insert_audio"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_audio_music" />
+            android:src="@drawable/z_editor_audio_music"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_insert_video"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_video_library" />
+            android:src="@drawable/z_editor_video_library"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/action_insert_youtube"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_youtube" />
+            android:src="@drawable/z_editor_youtube"
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/action_insert_link"
@@ -170,12 +191,14 @@
         <ImageButton
             android:id="@+id/action_insert_checkbox"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_check_box" />
+            android:src="@drawable/z_editor_check_box"
+            android:visibility="gone" />
 
 
         <ImageButton
             android:id="@+id/action_erase"
             style="@style/editorToolbar"
-            android:src="@drawable/z_editor_icon_erase" />
+            android:src="@drawable/z_editor_icon_erase"
+            android:visibility="gone" />
     </LinearLayout>
 </HorizontalScrollView>
