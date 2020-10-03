@@ -11,30 +11,29 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = TableNames.TABLE_EBOOKS)
 class EBooks (
     @PrimaryKey
-    @ColumnInfo(name = "book_id")
     val book_id:Int,
-    @ColumnInfo(name = "book_title")
     val book_title: String,
-    @ColumnInfo(name = "book_url_path")
+    val book_author: String?="",
+    val book_desc: String,
+    val book_size: String,
+    val book_no_of_pages: String,
     val book_url_path: String,
-    @ColumnInfo(name = "book_cover")
-    val book_cover: String,
-    @ColumnInfo(name = "book_uploaded_time")
+    val pdf_image_cover: String,
+    val book_type: String,//pdf or image
     val book_uploaded_time: String,
-    @ColumnInfo(name = "book_uploader")
-    val book_uploader: String,
-    @ColumnInfo(name = "book_uploader_name")
-    val book_uploader_name: String,
-    @ColumnInfo(name = "course_id")
+    val book_uploaded_by: String,
+    val book_uploaded_by_name: String,
     val course_id: String,
-    @ColumnInfo(name = "school_id")
     val school_id: String,
-    @ColumnInfo(name = "is_bookmarked")
+    val book_no_of_download: Int = 0,
     val is_bookmarked:Boolean = false
 ):Parcelable{
 
-    fun courseCode():String{
 
+    fun courseCode():String{
         return  course_id
     }
+    fun bookType() = if(book_type=="pdf") "pdf" else "photo"
+
+    fun bookCover() = if(book_type=="pdf") pdf_image_cover else book_url_path
 }

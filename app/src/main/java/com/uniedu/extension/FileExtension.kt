@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
-import android.widget.ImageView
 import androidx.annotation.RawRes
 import com.uniedu.utils.ClassUtilities
 import java.io.File

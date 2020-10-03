@@ -12,7 +12,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.uniedu.model.Questions
 
 fun Context.toast(message:String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-fun EditText.toString(input:EditText?)  = input.toString().trim()
+fun EditText.toString()  = this.toString().trim()
 
 
 private val imgSrcRgx = "src=\"(.*?)\"".toRegex(RegexOption.IGNORE_CASE)

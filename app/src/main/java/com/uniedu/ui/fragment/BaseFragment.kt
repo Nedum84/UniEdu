@@ -1,6 +1,7 @@
 package com.uniedu.ui.fragment
 
 import android.app.Activity
+import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -15,6 +16,7 @@ abstract class BaseFragment : Fragment(), CoroutineScope{
     lateinit var thisContext: Activity
     lateinit var prefs: ClassSharedPreferences
     lateinit var myDetails: MyDetails
+    val application:Application by lazy { requireNotNull(this.activity).application }
 
     private lateinit var job: Job
 

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.uniedu.databinding.ItemEbookBinding
 import com.uniedu.model.EBooks
 
-
+//HOME
 class AdapterEBooks(private val clickListener: EBookClickListener) : RecyclerView.Adapter<AdapterEBooks.ViewHolder>() {
 
     var list: List<EBooks> = emptyList()
@@ -45,4 +45,9 @@ class AdapterEBooks(private val clickListener: EBookClickListener) : RecyclerVie
 class EBookClickListener(val clickListener: (EBooks) -> Unit) {
     fun onClick(book: EBooks) = clickListener(book)
 }
+
+//FRAGMENT
+
+
+
 

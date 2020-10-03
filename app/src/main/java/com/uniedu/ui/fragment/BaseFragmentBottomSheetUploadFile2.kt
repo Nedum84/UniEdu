@@ -3,7 +3,6 @@ package com.uniedu.ui.fragment
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,11 +17,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.annotation.RawRes
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -30,16 +28,17 @@ import com.uniedu.BuildConfig
 import com.uniedu.R
 import com.uniedu.extension.*
 import com.uniedu.ui.activity.ActivityCropImage
+import com.uniedu.ui.fragment.bottomsheet.FragmentAsk
+import com.uniedu.ui.fragment.dialog.FragmentViewPdf
 import com.uniedu.utils.ClassAlertDialog
+import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
 import id.zelory.compressor.Compressor
 import kotlinx.android.synthetic.main.alert_dialog_inflate_preview_image.view.*
 import kotlinx.android.synthetic.main.bottomsheet_ebook_upload_type.view.*
 import kotlinx.android.synthetic.main.fragment_upload_e_book.*
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Logger
@@ -49,9 +48,15 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
     var fileUri: Uri? = null
     var mediaPath: String? = null
     var mImageFileLocation = ""
-    var imageFilePath: String? = null
+    var postFilePath: String? = null
 
-    var fileType = "IMAGE"
+    var fileType = "image"
+    val pDialog by lazy { ClassProgressDialog(thisContext) }
+
+//    for PDF files
+    var pdfImgCover = ""
+    var mPdfRenderer: PdfRenderer? = null
+    private var mPdfPage: PdfRenderer.Page? = null
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -127,10 +132,10 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         val inflater = LayoutInflater.from(context).inflate(R.layout.alert_dialog_inflate_preview_image, null)
         val builder = AlertDialog.Builder(thisContext)
 
-        if(imageFilePath!=null){
+        if(postFilePath!=null){
             Glide.with(this)
                 .load(
-                    if(fileType=="pdf") pdfImgPath else imageFilePath
+                    if(fileType=="pdf") pdfImgCover else postFilePath
                 )
                 .into(inflater.dialogPreviewImage)
         }
@@ -140,8 +145,39 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
             builder.setPositiveButton("Crop"
             ) { _, _ ->
                 //actions
-                prefs.setImgUploadPath(imageFilePath!!)
+                prefs.setImgUploadPath(postFilePath!!)
                 gotoCropActivity()
+            }
+        }else{
+            builder.setPositiveButton("View") { _, _ ->
+//                requireActivity().let {
+//                    FragmentViewPdf.newInstance(postFilePath!!).apply {
+//                        show(it.supportFragmentManager, tag)
+//                    }
+//                }
+
+
+//                val dFragment = FragmentViewPdf.newInstance(postFilePath!!)
+//                val ft = (context as FragmentActivity).supportFragmentManager.beginTransaction()
+//                val prev = (context as FragmentActivity).supportFragmentManager.findFragmentByTag(FragmentViewPdf::class.java.name)
+//                if (prev != null)ft.remove(prev)
+//                ft.addToBackStack(null)
+//                dFragment.show(ft, FragmentViewPdf::class.java.name)
+
+
+
+                var intent = Intent(Intent.ACTION_VIEW)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    val uri = FileProvider.getUriForFile( thisContext, BuildConfig.APPLICATION_ID + ".provider", File(postFilePath!!))
+                    intent.data = uri
+                    intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    startActivity(intent)
+                } else {
+                    intent.setDataAndType(Uri.parse(pdfImgCover), "application/pdf")
+                    intent = Intent.createChooser(intent, "Open File")
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
             }
         }
         builder.setNeutralButton("Remove"
@@ -159,21 +195,21 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
     override fun onResume() {
         super.onResume()
         if(prefs.getImgUploadPath() !="") {
-            imageFilePath = prefs.getImgUploadPath()
+            postFilePath = prefs.getImgUploadPath()
 
-            val postPathFile = File(imageFilePath!!)
+            val postPathFile = File(postFilePath!!)
             val inputFileInKb = postPathFile.length()/1024//KB like 358BB
-            if((imageFilePath == null)||(postPathFile.length() <=3)){
+            if((postFilePath == null)||(postPathFile.length() <=3)){
                 thisContext.toast("No Image selected...")
                 removeImage()
                 return
             }else if((inputFileInKb >= 1024)){//more than or equals 1MB
-                imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
+                postFilePath = compressAndAssignPath(postPathFile)//resizing image...
             }
 
             imagePreviewWrapper.visibility = View.VISIBLE
             pickImage.visibility = View.GONE
-            Glide.with(this).load(imageFilePath).into(imagePreview)
+            Glide.with(this).load(postFilePath).into(imagePreview)
 
         }else if(fileType!="pdf"){
             removeImage()
@@ -185,14 +221,15 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         imagePreviewWrapper?.visibility = View.GONE
 
         pickImage.visibility = View.VISIBLE
-        imageFilePath = null
+        postFilePath = null
         prefs.setImgUploadPath("")
     }
+
 
     private fun compressAndAssignPath(postPathFile:File) :String?{
         val tmpImgPath = ClassUtilities().getDirPath(thisContext, "tmp")
 
-        val filePath = "$tmpImgPath/${imageFilePath!!.split("/").last()}"
+        val filePath = "$tmpImgPath/${postFilePath!!.split("/").last()}"
         try {
             Compressor(thisContext)
                 .setMaxWidth(640)
@@ -241,19 +278,18 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
                     imagePreview.setImageBitmap(BitmapFactory.decodeFile(mediaPath, options))
                     cursor.close()
 
-
-                    imageFilePath = mediaPath
+                    postFilePath = mediaPath
                 }
 
             } else if (requestCode == CAMERA_PIC_REQUEST) {
                 if (Build.VERSION.SDK_INT <= 21) {
                     Glide.with(this).load(fileUri).into(imagePreview)
-                    imageFilePath = fileUri!!.path
+                    postFilePath = fileUri!!.path
 
                 } else {
 
                     Glide.with(this).load(mImageFileLocation).into(imagePreview)
-                    imageFilePath = mImageFileLocation
+                    postFilePath = mImageFileLocation
 
                 }
 
@@ -265,25 +301,30 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
 
 
 
-            if (imageFilePath!!.getFileExt() != "pdf"){
+            if (postFilePath!!.getFileExt() != "pdf"){
                 fileType = "image"
+                addQCourse.visibility = View.VISIBLE
                 resizeAndGotoCrop()
             }else{
                 fileType = "pdf"
                 pickImage.visibility = View.GONE
                 val imgBitmap = openPdfWithAndroidSDK()
-                pdfImgPath = context?.saveImgFromBitmap(imgBitmap)!!
+                pdfImgCover = context?.saveImgFromBitmap(imgBitmap)!!
 
                 imagePreview.setImageBitmap(imgBitmap)
+
+
+                if (mPdfRenderer!!.pageCount > 5){
+                    addQCourse.visibility = View.GONE
+                }else{
+                    addQCourse.visibility = View.VISIBLE
+                }
             }
 
         } else if (resultCode != Activity.RESULT_CANCELED) {
             Toast.makeText(thisContext, "Sorry, there was an error!", Toast.LENGTH_LONG).show()
         }
     }
-    private var pdfImgPath = ""
-    private var mPdfRenderer: PdfRenderer? = null
-    private var mPdfPage: PdfRenderer.Page? = null
 
     override fun onDestroy() {
         super.onDestroy()
@@ -294,12 +335,12 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
             mPdfRenderer?.close()
         }
     }
+
     // Display a page from the PDF on an ImageView
     @Throws(IOException::class)
     fun openPdfWithAndroidSDK(pageNumber: Int=0):Bitmap {
         // Copy sample.pdf from 'res/raw' folder into local cache so PdfRenderer can handle it
-        val fileCopy = File(imageFilePath!!)
-
+        val fileCopy = File(postFilePath!!)
         // We will get a page from the PDF file by calling openPage
         val fileDescriptor: ParcelFileDescriptor = ParcelFileDescriptor.open(
             fileCopy,
@@ -322,18 +363,18 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
 
 
     private fun resizeAndGotoCrop() {
-        val postPathFile = File(imageFilePath!!)
+        val postPathFile = File(postFilePath!!)
         val inputFileInKb = postPathFile.length()/1024//KB like 358BB
-        if((imageFilePath == null)||(postPathFile.length() <=3)){
+        if((postFilePath == null)||(postPathFile.length() <=3)){
             ClassAlertDialog(thisContext).toast("No Image selected...")
             prefs.setImgUploadPath("")
             return
         }else if((inputFileInKb >= 500)){//more than or equals 500KB
-            imageFilePath = compressAndAssignPath(postPathFile)//resizing image...
+            postFilePath = compressAndAssignPath(postPathFile)//resizing image...
         }
 
 
-        prefs.setImgUploadPath(imageFilePath!!)
+        prefs.setImgUploadPath(postFilePath!!)
         gotoCropActivity()
 
         pickImage.visibility = View.GONE
@@ -356,7 +397,7 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmSS", Locale.getDefault()).format(Date())
         val imageFileName = "IMAGE_" + timeStamp
         // Here we specify the environment location and the exact path where we want to save the so-created file
-        val storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/.photo_saving_app_lol")
+        val storageDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES + "/.photo_saving_app_edu")
 //        val storageDirectory = File(ClassUtilities().getDirPath(thisContext, "tmp"))
         Logger.getAnonymousLogger().info("Storage directory set")
 

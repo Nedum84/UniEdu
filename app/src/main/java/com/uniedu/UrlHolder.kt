@@ -3,7 +3,7 @@ package com.uniedu
 
 object  UrlHolder{
     const val APP_FOLDER_NAME = "UniEdu"
-    public const val URL_ROOT = "http://192.168.43.169/uniedu/server_request/"
+    public const val URL_ROOT = "http://192.168.43.168/uniedu/server_request/"
 //    private val URL_ROOT = "https://www.w3.org/Protocols/rfc2616/"
 //    public const val URL_ROOT = "http://unnelection.com.ng/rape_tracker/server_request/"
 

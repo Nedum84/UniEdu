@@ -8,15 +8,19 @@ import retrofit2.http.*
 
 interface UploadEBookService {
     @Multipart
-    @POST("add_question.php")
+    @POST("add_ebook.php")
     fun upload(
         @Part("request_type") request_type: String,
-        @Part("question_from") question_from: Int,
+        @Part("book_id") book_id: Int? = null,
+        @Part("book_uploaded_from") book_uploaded_from: Int,
+        @Part("book_title") book_title: String,
+        @Part("book_desc") book_desc: String,
+        @Part("book_no_of_pages") book_no_of_pages: Int? = 0,
+        @PartMap fileMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
+        @Part("book_type") book_type: String,//pdf or image
+        @Part("course_id") course_id: String,
         @Part("school_id") school_id: String,
-        @Part("question_body") question_body: String,
-        @PartMap imgMap: Map<String, @JvmSuppressWildcards RequestBody>? = null,
-        @Part("course") course: String,
-        @Part("is_adding_new_question") is_adding_new_question:Boolean //to know if you are adding or editing(false)
+        @Part("is_adding_new") is_adding_new:Boolean //to know if you are adding or editing(false)
     ): Call<ServerResponse>
 }
 

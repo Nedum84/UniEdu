@@ -6,8 +6,8 @@
     <data>
         <import type="android.text.TextUtils"/>
         <variable
-            name="question"
-            type="com.uniedu.model.Questions" />
+            name="ebook"
+            type="com.uniedu.model.EBooks" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +32,7 @@
             app:titleTextColor="@color/colorPurpleDark" />
 
         <TextView
-            android:id="@+id/submitQBTN"
+            android:id="@+id/publishEbook"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -61,7 +61,7 @@
 
 
         <LinearLayout
-            android:id="@+id/inputWrapper"
+            android:id="@+id/titleWrapper"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -73,7 +73,35 @@
             app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
             <EditText
-                android:id="@+id/questionBody"
+                android:id="@+id/bookTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawablePadding="5dp"
+                android:gravity="top"
+                android:hint="Title/Caption"
+                android:inputType="text"
+                android:text='@{TextUtils.isEmpty(ebook.book_title)?"":ebook.book_title}'
+                android:textColor="#777"
+                android:textColorHint="#c4c4c4"
+                android:textSize="16sp"
+                tools:ignore="Autofill,TextFields" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ebookDescWrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/titleWrapper">
+
+            <EditText
+                android:id="@+id/bookDesc"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
@@ -82,7 +110,7 @@
                 android:hint="Description(Optional)"
                 android:maxLines="20"
                 android:minLines="2"
-                android:text='@{TextUtils.isEmpty(question.question_body)?"":question.question_body}'
+                android:text='@{TextUtils.isEmpty(ebook.book_desc)?"":ebook.book_desc}'
                 android:textColor="#777"
                 android:textColorHint="#c4c4c4"
                 android:textSize="16sp"
@@ -96,7 +124,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="12dp"
             app:layout_constraintStart_toStartOf="@+id/guideline15"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper">
+            app:layout_constraintTop_toBottomOf="@+id/ebookDescWrapper">
 
             <ImageView
                 android:id="@+id/imagePreview"
@@ -127,7 +155,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="12dp"
             app:layout_constraintStart_toEndOf="@+id/imagePreviewWrapper"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper"
+            app:layout_constraintTop_toBottomOf="@+id/ebookDescWrapper"
             app:shape_dot_radius="2dp"
             app:shape_dot_spacing="1dp"
             app:shape_edge_position="right|left|top|bottom">
@@ -155,7 +183,21 @@
             android:textColor="@color/colorWhite"
             app:drawableTint="@color/colorWhite"
             app:layout_constraintEnd_toStartOf="@+id/guideline14"
-            app:layout_constraintTop_toBottomOf="@+id/inputWrapper" />
+            app:layout_constraintTop_toBottomOf="@+id/ebookDescWrapper" />
+
+        <TextView
+            android:id="@+id/textView31"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="For textbooks, Leave the course blank"
+            android:textColor="@color/colorRed"
+            android:textColorHint="@color/colorRed"
+            android:textStyle="italic|bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/addQCourse" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

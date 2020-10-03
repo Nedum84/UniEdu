@@ -3,12 +3,10 @@ package com.uniedu.ui.fragment.bottomsheet
 import android.app.Dialog
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.SimpleAdapter
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -18,24 +16,10 @@ import com.uniedu.databinding.FragmentEBookDetailBinding
 import com.uniedu.extension.*
 import com.uniedu.model.Answers
 import com.uniedu.model.Questions
-import com.uniedu.network.RetrofitPOST
-import com.uniedu.network.ServerResponse
-import com.uniedu.network.UploadImage
 import com.uniedu.ui.fragment.BaseFragmentBottomSheet
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.viewmodel.ModelAnswersFrag
 import jp.wasabeef.richeditor.RichEditor
-import kotlinx.android.synthetic.main.fragment_ask.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.http.Multipart
-import retrofit2.http.POST
-import retrofit2.http.Part
-import java.io.File
-import java.util.*
 
 
 private const val QUESTION = "question"

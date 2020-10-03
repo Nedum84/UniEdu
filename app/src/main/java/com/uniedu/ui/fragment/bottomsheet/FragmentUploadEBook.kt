@@ -1,46 +1,32 @@
 package com.uniedu.ui.fragment.bottomsheet
 
-import android.Manifest
 import android.app.Dialog
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.uniedu.R
 import com.uniedu.databinding.FragmentUploadEBookBinding
-import com.uniedu.extension.addOnClickListener
 import com.uniedu.extension.makeFullScreen
-import com.uniedu.extension.setAllOnClickListener
 import com.uniedu.extension.toast
 import com.uniedu.model.Courses
 import com.uniedu.model.EBooks
-import com.uniedu.model.Questions
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.network.ServerResponse
 import com.uniedu.network.UploadEBookService
-import com.uniedu.room.DatabaseRoom
 import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile2
-import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
-import com.uniedu.viewmodel.ModelQuestionsFrag
-import kotlinx.android.synthetic.main.bottomsheet_ebook_upload_type.view.*
+import com.uniedu.viewmodel.ModelEbook
 import kotlinx.android.synthetic.main.fragment_upload_e_book.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -56,10 +42,10 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
     private var ebook: EBooks? = null
     lateinit var binding:FragmentUploadEBookBinding
 
-    lateinit var modelQuestionsFrag: ModelQuestionsFrag
+    lateinit var modelEbookFrag: ModelEbook
 
     private var course: Courses? = null
-    private var is_adding_new_question = true
+    var is_adding_new = true
 
 
 
@@ -70,10 +56,10 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
             ebook?.let {
                 imagePreviewWrapper.visibility = View.VISIBLE
                 pickImage.visibility = View.GONE
-                Glide.with(this).load(imageFilePath).into(imagePreview)
+                Glide.with(this).load(postFilePath).into(imagePreview)
 
 
-                is_adding_new_question = false
+                is_adding_new = false
             }
         }
     }
@@ -99,8 +85,8 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
                 }
             }
         }
-        binding.submitQBTN.setOnClickListener {
-            submitQuestion()
+        binding.publishEbook.setOnClickListener {
+            submitEbook()
         }
 
 
@@ -131,73 +117,80 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
         })
 
 
-        val vFactory = ModelQuestionsFrag.Factory(requireActivity().application)
-        modelQuestionsFrag = requireActivity().run{
-            ViewModelProvider(this, vFactory).get(ModelQuestionsFrag::class.java)
+        val vFactory = ModelEbook.Factory(requireActivity().application)
+        modelEbookFrag = requireActivity().run{
+            ViewModelProvider(this, vFactory).get(ModelEbook::class.java)
         }
     }
 
-    private fun submitQuestion(){
-        val question_body = binding.questionBody.text.toString().trim()
+    private fun submitEbook(){
+        val book_title = binding.bookTitle.text.toString().trim()
+        val book_desc = binding.bookDesc.text.toString().trim()
 
-        if (question_body.isEmpty() && imageFilePath.isNullOrEmpty()){
-            context.let {it!!.toast("No question entered")}
+        if (book_title.isEmpty()){
+            context.let {it!!.toast("Enter the title")}
+        }else if (postFilePath.isNullOrEmpty()){
+            context.let {it!!.toast("Select File")}
         }else if (course==null || course!!.course_code.isNullOrEmpty()){
             context.let {it!!.toast("Select course")}
         }else{
             ClassUtilities().hideKeyboard(binding.root, thisContext)
-            val pDialog = ClassProgressDialog(thisContext)
             pDialog.createDialog()
 
             // Map is used to multipart the file using okhttp3.RequestBody
-            val map = HashMap<String, RequestBody>()
-            val imgFile = File("$imageFilePath")
-            // Parsing any Media type file
-            val requestBody     = RequestBody.create(MediaType.parse("*/*"), imgFile)
-            map["file\"; filename=\"" + imgFile.name + "\""] = requestBody
+            val fileMap = HashMap<String, RequestBody>()
+            val file = File("$postFilePath")
+            val requestBody     = RequestBody.create(MediaType.parse("*/*"), file)
+            fileMap["file\"; filename=\"" + file.name + "\""] = requestBody
 
-
-            val imgMap = if (!imageFilePath.isNullOrEmpty())  map else HashMap<String, RequestBody>()
+            //For PDF Preview Map
+            if (fileType == "pdf" && !pdfImgCover.isNullOrEmpty()){
+                val pdfFileCover = File(pdfImgCover)
+                val pdfRequestBody     = RequestBody.create(MediaType.parse("*/*"), pdfFileCover)
+                fileMap["pdf_file_cover\"; filename=\"" + pdfFileCover.name + "\""] = pdfRequestBody
+            }
 
             val uploadEbook = RetrofitPOST.retrofitWithJsonResponse.create(UploadEBookService::class.java)
             uploadEbook.upload(
-                "add_question",
-                myDetails.user_id,
-                myDetails.user_school,
-                "$question_body",
-                imgMap,
-                "${course?.course_id}",
-                is_adding_new_question
+                request_type = "add_ebook",
+                book_id = ebook?.book_id,
+                book_uploaded_from = myDetails.user_id,
+                book_title = book_title,
+                book_desc = book_desc,
+                fileMap = fileMap,
+                book_type = fileType,
+                course_id = "${course?.course_id}",
+                school_id = myDetails.user_school,
+                is_adding_new = is_adding_new,
+                book_no_of_pages = mPdfRenderer?.pageCount
             ).enqueue(object: Callback<ServerResponse> {
                 override fun onFailure(call: Call<ServerResponse>, t: Throwable) {
                     pDialog.dismissDialog()
                     requireContext().toast("No internet connect!")
                     t.printStackTrace()
                 }
-
                 override fun onResponse(call: Call<ServerResponse>, response: Response<ServerResponse>) {
                     pDialog.dismissDialog()
                     if (response.isSuccessful) {
                         if (response.body() != null) {
-
                             val serverResponse = response.body()
 
                             if (!(serverResponse!!.success as Boolean)){
                                 context!!.toast(serverResponse.respMessage!!)
                             }else{
-                                thisContext.toast(if (is_adding_new_question) "Question published" else "Question updated")
+                                thisContext.toast(if (is_adding_new) "Book published" else "Book updated")
 
                                 try {//add to database
                                     val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-                                    val type = Types.newParameterizedType(MutableList::class.java,Questions::class.java)
-                                    val adapter: JsonAdapter<List<Questions>> = moshi.adapter(type)
-                                    val questions: List<Questions> = adapter.fromJson(serverResponse.otherDetail!!)!!
-                                    modelQuestionsFrag.addToDb(questions)
+                                    val type = Types.newParameterizedType(MutableList::class.java, EBooks::class.java)
+                                    val adapter: JsonAdapter<List<EBooks>> = moshi.adapter(type)
+                                    val questions: List<EBooks> = adapter.fromJson(serverResponse.otherDetail!!)!!
+                                    modelEbookFrag.addToDb(questions)
 
                                 } catch (e: Exception) {
                                     e.printStackTrace()
                                 }
-                                questionSubmitted()
+                                bookPublished()
                             }
                         }
                     } else {
@@ -209,19 +202,29 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
         }
     }
 
-    private fun questionSubmitted() {
+
+    private fun bookPublished() {
         imagePreview?.setImageDrawable(null)
         imagePreviewWrapper?.visibility = View.GONE
 
         pickImage.visibility = View.VISIBLE
-        imageFilePath = null
+        postFilePath = null
         prefs.setImgUploadPath("")
 
-        binding.questionBody.setText("")
+        binding.bookTitle.setText("")
+        binding.bookDesc.setText("")
         binding.addQCourse.text = "Select Course"
+        is_adding_new = true
+        ebook= null
         dismiss()
         dialog?.dismiss()
     }
+
+
+
+
+
+
 
 
     //Make full screen

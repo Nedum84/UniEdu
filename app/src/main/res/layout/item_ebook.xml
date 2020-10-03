@@ -31,7 +31,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    imagePath="@{ebook.book_cover}"
+                    imagePath="@{ebook.bookCover()}"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -45,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:ellipsize="end"
-                android:hint="Infinix HOT 6 + Rug and other(Please Specify)"
+                android:hint="Fundamental of Basic Electrical Machines"
                 android:maxLines="2"
                 android:text="@{ebook.book_title}"
                 android:textColor="@color/colorBlack"
@@ -69,5 +69,24 @@
                 android:textSize="8sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+            <TextView
+                android:id="@+id/textView32"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border_radius_accent"
+                android:elevation="4dp"
+                android:paddingStart="4dp"
+                android:paddingEnd="4dp"
+                android:hint="PDF"
+                android:text="@{ebook.bookType()}"
+                android:textAllCaps="true"
+                android:textColor="@color/colorWhite"
+                android:textColorHint="@color/colorWhite"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView5"
+                app:layout_constraintEnd_toEndOf="@+id/imageView5"
+                app:layout_constraintStart_toStartOf="@+id/imageView5"
+                app:layout_constraintTop_toBottomOf="@+id/imageView5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

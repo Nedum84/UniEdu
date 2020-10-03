@@ -19,6 +19,10 @@ interface EBooksDao {
     @Query("SELECT * FROM $TABLE_EBOOKS ORDER BY book_id DESC")
     fun getAllBooks(): LiveData<List<EBooks>>
 
+    @Query("SELECT * FROM $TABLE_EBOOKS WHERE book_title LIKE :id OR course_id LIKE :id  ORDER BY book_title DESC")
+    fun getAllBooks(id: String): LiveData<List<EBooks>>
+
+
     @Query("DELETE FROM $TABLE_EBOOKS")
     fun delete()
 }
