@@ -60,7 +60,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView5"
                 app:srcCompat="@drawable/ic_baseline_more_vert"
-                android:onClick="@{()->clickListener.onMenuClick(item4sale)}"/>
+                android:onClick="@{(view)->clickListener.onMenuClick(item4sale, view)}"/>
 
             <TextView
                 android:id="@+id/textView6"

@@ -15,16 +15,17 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="128dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
+            android:layout_marginBottom="8dp"
             android:padding="4dp"
             android:onClick="@{()->clickListener.onClick(ebook)}">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/imageView5"
                 android:layout_width="0dp"
-                android:layout_height="140dp"
+                app:cardCornerRadius="6dp"
+                android:layout_height="110dp"
                 app:cardUseCompatPadding="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +49,8 @@
                 android:hint="Fundamental of Basic Electrical Machines"
                 android:maxLines="2"
                 android:text="@{ebook.book_title}"
-                android:textColor="@color/colorBlack"
-                android:textColorHint="@color/colorBlack"
+                android:textColor="@color/colorBlueSky"
+                android:textColorHint="@color/colorBlueSky"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,12 +62,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/border_radius_transparent"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"
                 android:hint="ece332"
-                android:text="@{ebook.courseCode}"
+                android:textAllCaps="true"
+                bindCourseCode="@{ebook.course_id}"
+                android:textAlignment="center"
                 android:textColor="@color/colorBlueSky"
-                android:textSize="8sp"
+                android:textSize="10sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
 

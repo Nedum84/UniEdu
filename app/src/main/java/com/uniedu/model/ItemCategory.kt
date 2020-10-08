@@ -8,7 +8,8 @@ import com.uniedu.room.TableNames
 @Entity(tableName = TableNames.TABLE_ITEM_CATEGORY)
 class ItemCategory (
     @PrimaryKey
-    val  category_id:Int,
+    val category_id:Int,
     val category_name: String,
+    val category_banner: String="",
     val arr_order:Int
 )

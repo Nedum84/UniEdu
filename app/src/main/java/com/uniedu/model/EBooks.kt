@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.uniedu.room.TableNames
+import com.uniedu.utils.ClassHtmlFormater
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -36,4 +37,8 @@ class EBooks (
     fun bookType() = if(book_type=="pdf") "pdf" else "photo"
 
     fun bookCover() = if(book_type=="pdf") pdf_image_cover else book_url_path
+
+    fun bookSize() = book_size+"KB"
+
+    fun bookDesc() = if (book_desc.isEmpty()) ClassHtmlFormater().fromHtml("<i>No Description</i>") else book_desc
 }

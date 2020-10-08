@@ -16,6 +16,7 @@ import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.uniedu.R
 import com.uniedu.databinding.FragmentUploadEBookBinding
+import com.uniedu.extension.getCourse
 import com.uniedu.extension.makeFullScreen
 import com.uniedu.extension.toast
 import com.uniedu.model.Courses
@@ -23,11 +24,16 @@ import com.uniedu.model.EBooks
 import com.uniedu.network.RetrofitPOST
 import com.uniedu.network.ServerResponse
 import com.uniedu.network.UploadEBookService
+import com.uniedu.room.DatabaseRoom
 import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile2
 import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
 import com.uniedu.viewmodel.ModelEbook
 import kotlinx.android.synthetic.main.fragment_upload_e_book.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -45,7 +51,6 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
     lateinit var modelEbookFrag: ModelEbook
 
     private var course: Courses? = null
-    var is_adding_new = true
 
 
 
@@ -54,12 +59,28 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
         arguments?.let {
             ebook = it.getParcelable(EBOOK)
             ebook?.let {
-                imagePreviewWrapper.visibility = View.VISIBLE
-                pickImage.visibility = View.GONE
-                Glide.with(this).load(postFilePath).into(imagePreview)
-
-
                 is_adding_new = false
+            }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (!is_adding_new){
+            binding.ebook = ebook
+            postFilePath = ebook?.book_url_path
+            pdfImgCover = ebook!!.pdf_image_cover
+
+            binding.imagePreviewWrapper.visibility = View.VISIBLE
+            binding.pickImage.visibility = View.GONE
+            Glide.with(this).load(ebook!!.bookCover()).into(binding.imagePreview)
+
+
+            CoroutineScope(Dispatchers.Default).launch {
+                try {
+                    course = db.coursesDao.getById(ebook!!.course_id.toInt())
+                    binding.addQCourse.text = course?.courseCode()
+                } catch (e: Exception) {e.printStackTrace()}
             }
         }
     }
@@ -67,6 +88,7 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_upload_e_book, container, false)
+        binding.imagePreviewWrapper?.visibility = View.GONE
 
         bindEvents()
 
@@ -150,14 +172,16 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
                 fileMap["pdf_file_cover\"; filename=\"" + pdfFileCover.name + "\""] = pdfRequestBody
             }
 
+            val fileMap2 = if (!(postFilePath.isNullOrEmpty())&& postFilePath!!.contains("http")) HashMap<String, RequestBody>() else fileMap
+
             val uploadEbook = RetrofitPOST.retrofitWithJsonResponse.create(UploadEBookService::class.java)
             uploadEbook.upload(
                 request_type = "add_ebook",
                 book_id = ebook?.book_id,
-                book_uploaded_from = myDetails.user_id,
+                book_uploaded_by = myDetails.user_id,
                 book_title = book_title,
                 book_desc = book_desc,
-                fileMap = fileMap,
+                fileMap = fileMap2,
                 book_type = fileType,
                 course_id = "${course?.course_id}",
                 school_id = myDetails.user_school,
@@ -204,16 +228,16 @@ class FragmentUploadEBook : BaseFragmentBottomSheetUploadFile2() {
 
 
     private fun bookPublished() {
-        imagePreview?.setImageDrawable(null)
-        imagePreviewWrapper?.visibility = View.GONE
+        binding.imagePreview?.setImageDrawable(null)
+        binding.imagePreviewWrapper?.visibility = View.GONE
 
-        pickImage.visibility = View.VISIBLE
+        binding.pickImage?.visibility = View.VISIBLE
         postFilePath = null
         prefs.setImgUploadPath("")
 
-        binding.bookTitle.setText("")
-        binding.bookDesc.setText("")
-        binding.addQCourse.text = "Select Course"
+        binding.bookTitle?.setText("")
+        binding.bookDesc?.setText("")
+        binding.addQCourse?.text = "Select Course"
         is_adding_new = true
         ebook= null
         dismiss()

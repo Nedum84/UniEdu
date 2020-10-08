@@ -3,6 +3,7 @@ package com.uniedu.ui.fragment
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -57,6 +58,9 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
     var pdfImgCover = ""
     var mPdfRenderer: PdfRenderer? = null
     private var mPdfPage: PdfRenderer.Page? = null
+
+    //adding new or editing
+    var is_adding_new = true
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -212,7 +216,7 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
             Glide.with(this).load(postFilePath).into(imagePreview)
 
         }else if(fileType!="pdf"){
-            removeImage()
+//            removeImage()
         }
 
     }
@@ -220,7 +224,7 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         imagePreview?.setImageDrawable(null)
         imagePreviewWrapper?.visibility = View.GONE
 
-        pickImage.visibility = View.VISIBLE
+        pickImage?.visibility = View.VISIBLE
         postFilePath = null
         prefs.setImgUploadPath("")
     }
@@ -334,6 +338,8 @@ abstract class BaseFragmentBottomSheetUploadFile2 : BaseFragmentBottomSheet(){
         if (mPdfRenderer != null) {
             mPdfRenderer?.close()
         }
+
+        removeImage()
     }
 
     // Display a page from the PDF on an ImageView

@@ -58,7 +58,6 @@ class FragmentAnswerQuestion : BaseFragmentBottomSheetUploadFile() {
     lateinit var binding:FragmentAnswerQuestionBinding
 
     private lateinit var mEditor: RichEditor
-    private lateinit var mPreview: TextView
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -102,14 +101,10 @@ class FragmentAnswerQuestion : BaseFragmentBottomSheetUploadFile() {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_answer_question, container, false)
         // Inflate the layout for this fragment
 
-        launch {
-            withContext(Dispatchers.Main){
-                initToolbar(binding.root)
-                bindActions()
-                mEditor = binding.editor
-                binding.root.setupTextEditor(mEditor)
-            }
-        }
+        initToolbar(binding.root)
+        mEditor = binding.editor
+        bindActions()
+        binding.root.setupTextEditor(mEditor)
 
         return binding.root
     }

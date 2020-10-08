@@ -10,97 +10,102 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.uniedu.R
 import com.uniedu.databinding.FragmentEBookDetailBinding
 import com.uniedu.extension.*
 import com.uniedu.model.Answers
+import com.uniedu.model.EBooks
 import com.uniedu.model.Questions
 import com.uniedu.ui.fragment.BaseFragmentBottomSheet
 import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.viewmodel.ModelAnswersFrag
+import com.uniedu.viewmodel.ModelEbook
 import jp.wasabeef.richeditor.RichEditor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
-private const val QUESTION = "question"
-private const val ANSWER = "answer"
+private const val EBOOK = "ebook"
 
 
 class FragmentEBookDetail : BaseFragmentBottomSheet() {
-    lateinit var fAnsModel: ModelAnswersFrag
-    private var question: Questions? = null
-    private var answer: Answers? = null
-    var pDialog: ClassProgressDialog? = null
-    var is_adding_new = true
+    lateinit var modelEbook: ModelEbook
+    private var ebook: EBooks? = null
 
     lateinit var binding:FragmentEBookDetailBinding
 
 
-    private lateinit var mEditor: RichEditor
-    private lateinit var mPreview: TextView
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val viewModelFactory = ModelAnswersFrag.Factory(question!!, requireActivity().application)
-        fAnsModel = requireActivity().run{
-            ViewModelProvider(this, viewModelFactory).get(ModelAnswersFrag::class.java)
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
         arguments?.let {
-            question = it.getParcelable(QUESTION)
-            answer = it.getParcelable(ANSWER)
-
-            if (answer!=null){
-                !is_adding_new
-            }else{
-                is_adding_new = true
-            }
+            ebook = it.getParcelable(EBOOK)
         }
+        val viewModelFactory = ModelEbook.Factory(application)
+        modelEbook = requireActivity().run{
+            ViewModelProvider(this, viewModelFactory).get(ModelEbook::class.java)
+        }
+        modelEbook.ebooks().observe(viewLifecycleOwner, Observer {
+            it?.let {
+                ebook = it.first { it.book_id == ebook?.book_id }
+
+                modelEbook.setCurEBook(ebook!!)
+            }
+        })
+        CoroutineScope(Dispatchers.Default).launch {
+            try {
+                val course = db.coursesDao.getById(ebook!!.course_id.toInt())
+                binding.courseCode = course?.courseCode()
+            } catch (e: Exception) {e.printStackTrace()}
+        }
+        binding.apply { lifecycleOwner = this@FragmentEBookDetail }
+        modelEbook.setCurEBook(ebook!!)
+        binding.ebook = modelEbook
     }
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_e_book_detail, container, false)
         // Inflate the layout for this fragment
 
-        mEditor = binding.editor
-        binding.root.setupTextEditor(mEditor)
 
-        pDialog = ClassProgressDialog(thisContext)
+        initToolbar()
         bindActions()
 
         return binding.root
     }
 
     private fun bindActions() {
-
-        //Question preview
-        binding.preViewQuestion.setEditorFontSize(14)
-        binding.preViewQuestion.setPadding(2, 2, 2, 2)
-        binding.preViewQuestion.setInputEnabled(false)
-        binding.preViewQuestion.html = "<b>Question:</b><br>"+question?.question_body
-
-        binding.viewQuestion.setOnClickListener {
-
-            //if the position is equals to the item position which is to be expanded
-            if (binding.preViewQuestion.visibility == View.GONE) {
-                val slideDown = AnimationUtils.loadAnimation(context, R.anim.slide_down)
-                binding.preViewQuestion.visibility = View.VISIBLE
-                binding.preViewQuestion.startAnimation(slideDown)
-                binding.dropDownToggle.setImageResource(R.drawable.ic_baseline_expand_less)
-                binding.hideViewQuestion.text = "hide question"
-            }else{
-                binding.preViewQuestion.visibility = View.GONE
-                binding.dropDownToggle.setImageResource(R.drawable.ic_baseline_expand_more)
-                binding.hideViewQuestion.text = "view question"
+        binding.editEbook.setOnClickListener {
+            requireActivity().let {
+                FragmentUploadEBook.newInstance(ebook).apply {
+                    show(it.supportFragmentManager, tag)
+                }
             }
         }
 
+        binding.downloadEbook.setOnClickListener {
+            context?.toast("Download started...")
+        }
+
     }
+
+
+    private fun initToolbar() {
+        val toolbar = binding.root.findViewById(R.id.toolbar) as androidx.appcompat.widget.Toolbar
+        toolbar.setNavigationOnClickListener {
+            dismiss()
+            dialog?.dismiss()
+        }
+    }
+
+
+
+
 
 
 
@@ -113,11 +118,10 @@ class FragmentEBookDetail : BaseFragmentBottomSheet() {
     companion object {
 
         @JvmStatic
-        fun newInstance(question: Parcelable, answer: Parcelable? = null) =
+        fun newInstance(param: Parcelable) =
             FragmentEBookDetail().apply {
                 arguments = Bundle().apply {
-                    putParcelable(QUESTION, question)
-                    putParcelable(ANSWER, answer)
+                    putParcelable(EBOOK, param)
                 }
             }
     }

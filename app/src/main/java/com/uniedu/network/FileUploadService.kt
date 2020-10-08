@@ -12,7 +12,7 @@ interface UploadEBookService {
     fun upload(
         @Part("request_type") request_type: String,
         @Part("book_id") book_id: Int? = null,
-        @Part("book_uploaded_from") book_uploaded_from: Int,
+        @Part("book_uploaded_by") book_uploaded_by: Int,
         @Part("book_title") book_title: String,
         @Part("book_desc") book_desc: String,
         @Part("book_no_of_pages") book_no_of_pages: Int? = 0,

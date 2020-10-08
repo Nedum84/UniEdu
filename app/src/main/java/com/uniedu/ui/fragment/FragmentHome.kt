@@ -11,6 +11,7 @@ import com.uniedu.R
 import com.uniedu.databinding.FragmentHomeBinding
 import com.uniedu.ui.fragment.bottomsheet.FragmentAsk
 import com.uniedu.ui.fragment.bottomsheet.FragmentChooseSchool
+import com.uniedu.ui.fragment.bottomsheet.FragmentSellItem
 import com.uniedu.viewmodel.HomeViewModel
 
 
@@ -40,6 +41,13 @@ class FragmentHome : BaseFragment() {
         binding.askQuestion.setOnClickListener {
             requireActivity().let {
                 FragmentAsk().apply {
+                    show(it.supportFragmentManager, tag)
+                }
+            }
+        }
+        binding.answerQuestion.setOnClickListener {
+            requireActivity().let {
+                FragmentSellItem().apply {
                     show(it.supportFragmentManager, tag)
                 }
             }

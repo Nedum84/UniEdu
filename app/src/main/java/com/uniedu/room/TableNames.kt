@@ -16,6 +16,7 @@ class TableNames {
         const val TABLE_VIDEOS = "edu_videos"
         const val TABLE_MY_SUBSCRIPTION = "edu_my_subscription"
         const val TABLE_RECENTLY_VIEWED = "edu_recently_viewed"
+        const val TABLE_SUBJECT = "edu_subject"
 
 
     }

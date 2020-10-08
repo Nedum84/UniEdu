@@ -33,21 +33,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="16dp" />
+            app:layout_constraintGuide_begin="8dp" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="16dp" />
+            app:layout_constraintGuide_end="8dp" />
 
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toStartOf="@+id/guideline7"
             app:layout_constraintStart_toStartOf="@+id/guideline6"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -72,7 +74,8 @@
                     android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/textView16" />
+                    app:layout_constraintTop_toBottomOf="@+id/textView16"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
                 <TextView
                     android:id="@+id/upload_material"

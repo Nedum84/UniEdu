@@ -121,7 +121,8 @@ class MainActivity : AppCompatActivity(), BottomNavigation.OnMenuItemSelectionLi
                 navController.popBackStack(R.id.nav_home, false)
             }
             R.id.bbn_video ->{
-                navNavigate(R.id.fragmentTopicVideo)
+//                navNavigate(R.id.fragmentTopicVideo)
+                navNavigate(R.id.fragmentItemForSale)
             }
             R.id.bbn_ebook ->{
                 navNavigate(R.id.fragmentEBook)

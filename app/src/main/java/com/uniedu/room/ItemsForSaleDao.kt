@@ -21,6 +21,9 @@ interface ItemsForSaleDao {
     @Query("SELECT * FROM ${TableNames.TABLE_ITEM_FOR_SALE} ORDER BY item_id DESC")
     fun getAll(): LiveData<List<ItemsForSale>>
 
+    @Query("SELECT * FROM ${TableNames.TABLE_ITEM_FOR_SALE} WHERE item_category LIKE :sQuery  ORDER BY item_name ASC")
+    fun getAll(sQuery: String): LiveData<List<ItemsForSale>>
+
     @Query("DELETE FROM ${TableNames.TABLE_ITEM_FOR_SALE}")
     fun delete()
 }

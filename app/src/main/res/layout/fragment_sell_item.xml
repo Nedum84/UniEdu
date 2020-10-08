@@ -1,14 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragment.bottomsheet.FragmentSellItem">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+        <import type="android.text.TextUtils"/>
+        <variable
+            name="itemForSale"
+            type="com.uniedu.model.ItemsForSale" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:paddingBottom="12dp"
+        tools:context=".ui.fragment.bottomsheet.FragmentSellItem">
 
-</FrameLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@drawable/border_toolbar"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:navigationIcon="@drawable/ic_baseline_close_rotate"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="SELL | RENT"
+            app:titleTextColor="@color/colorPurpleDark" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline15"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <LinearLayout
+            android:id="@+id/wrapper3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintStart_toEndOf="@+id/wrapper2"
+            app:layout_constraintTop_toBottomOf="@+id/nameWrapper">
+
+            <EditText
+                android:id="@+id/item_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawablePadding="5dp"
+                android:gravity="top"
+                android:hint="Price"
+                android:inputType="text"
+                android:text='@{TextUtils.isEmpty(itemForSale.item_price)?"":itemForSale.item_price}'
+                android:textColor="#777"
+                android:textColorHint="#c4c4c4"
+                android:textSize="16sp"
+                tools:ignore="Autofill,TextFields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/nameWrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <EditText
+                android:id="@+id/item_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawablePadding="5dp"
+                android:gravity="top"
+                android:hint="Product Name"
+                android:inputType="text"
+                android:text='@{TextUtils.isEmpty(itemForSale.item_name)?"":itemForSale.item_name}'
+                android:textColor="#777"
+                android:textColorHint="#c4c4c4"
+                android:textSize="16sp"
+                tools:ignore="Autofill,TextFields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wrapper2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/wrapper3"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/nameWrapper">
+
+            <EditText
+                android:id="@+id/item_qty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawablePadding="5dp"
+                android:gravity="top"
+                android:hint="Quantity"
+                android:inputType="text"
+                android:text='@{TextUtils.isEmpty(itemForSale.item_qty)?"":itemForSale.item_qty}'
+                android:textColor="#777"
+                android:textColorHint="#c4c4c4"
+                android:textSize="16sp"
+                tools:ignore="Autofill,TextFields" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/inputWrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_no_radius_grey"
+            android:orientation="vertical"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/item_category">
+
+            <jp.wasabeef.richeditor.RichEditor
+                android:id="@+id/editor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:minHeight="200dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/item_category"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/border_radius_black"
+            android:padding="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:text="CATEGORY"
+            android:textColor="@color/colorWhite"
+            app:drawableEndCompat="@drawable/ic_baseline_arrow_drop_down"
+            app:drawableTint="@color/colorWhite"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:layout_constraintStart_toStartOf="@+id/guideline15"
+            app:layout_constraintTop_toBottomOf="@+id/wrapper3" />
+
+        <include
+            android:id="@+id/include4"
+            layout="@layout/editor_toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/submitBTN"
+            app:layout_constraintStart_toStartOf="@+id/guideline15" />
+
+        <ImageView
+            android:id="@+id/submitBTN"
+            android:layout_width="35dp"
+            android:layout_height="30dp"
+            android:background="@drawable/design_circle_border2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline14"
+            app:srcCompat="@drawable/ic_baseline_send"
+            tools:ignore="ContentDescription" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

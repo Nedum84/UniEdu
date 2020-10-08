@@ -21,7 +21,8 @@ import com.uniedu.room.TableNames.Companion.DATABASE_NAME
     RecentlyViewed::class,
     MySubscription::class,
     ItemsForSale::class,
-    Questions::class], version = 1, exportSchema = false)
+    Questions::class,
+    Subjects::class], version = 1, exportSchema = false)
 abstract class DatabaseRoom : RoomDatabase() {
 
     /**
@@ -39,6 +40,7 @@ abstract class DatabaseRoom : RoomDatabase() {
     abstract val schoolTypesDao:SchoolTypesDao
     abstract fun topicsDao(): TopicsDao
     abstract fun videosDao(): VideosDao
+    abstract val subjectsDao: SubjectsDao
 
     /**
      * Define a companion object, this allows us to add functions on the SleepDatabase class.

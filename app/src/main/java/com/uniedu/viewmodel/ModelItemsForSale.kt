@@ -9,6 +9,7 @@ import com.uniedu.model.*
 import com.uniedu.repository.RepoAnswersFrag
 import com.uniedu.repository.RepoCourses
 import com.uniedu.repository.RepoEBooks
+import com.uniedu.repository.RepoItemForSale
 import com.uniedu.room.DatabaseRoom
 import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.utils.ClassSharedPreferences
@@ -18,13 +19,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.util.*
 
-class ModelEbook(application: Application) : AndroidViewModel(application) {
+class ModelItemsForSale(application: Application) : AndroidViewModel(application) {
 
     private val database = DatabaseRoom.getDatabaseInstance(application)
     private val viewModelJob = SupervisorJob()//OR Job()
     private val viewModelScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    private val booksRepo = RepoEBooks(database)
+    private val itemsRepo = RepoItemForSale(database)
     private val myDetails = ClassSharedPreferences(application).getCurUserDetail()
 
     override fun onCleared() {
@@ -36,13 +37,13 @@ class ModelEbook(application: Application) : AndroidViewModel(application) {
     private val _queryString = MutableLiveData<Event<String>>()
     init {
         viewModelScope.launch {
-            booksRepo.getEBooks(myDetails)
+            itemsRepo.getItems(myDetails)
         }
 
         _queryString.value = Event("")
     }
 
-    val feedBack = booksRepo.feedBack
+    val feedBack = itemsRepo.feedBack
 
 
 
@@ -52,30 +53,30 @@ class ModelEbook(application: Application) : AndroidViewModel(application) {
 
         _queryString.value = Event(q)
     }
-    fun ebooks(qString: String=""):LiveData<List<EBooks>>{
-        return booksRepo.ebooks(qString)
+    fun items(qString: String=""):LiveData<List<ItemsForSale>>{
+        return itemsRepo.itemForSale(qString)
     }
 
 
 
-    fun addToDb(books: List<EBooks>){
+    fun addToDb(item: List<ItemsForSale>){
         viewModelScope.launch {
-            booksRepo.addEbook(books)
+            itemsRepo.addItems(item)
         }
     }
 
 
     //
-//    Current Ebook for preview
+//    Current Item for preview
 
-    val curEBook: LiveData<EBooks> get() = _curEBook
-    private val _curEBook = MutableLiveData<EBooks>()
-    fun setCurEBook(item:EBooks){
-        _curEBook.value = item
+    val curItem: LiveData<ItemsForSale> get() = _curItem
+    private val _curItem = MutableLiveData<ItemsForSale>()
+    fun setCurItem(item:ItemsForSale){
+        _curItem.value = item
     }
     //
-//    is it my question VISIBILITY
-    fun isMyQuestion() = if (curEBook.value!!.book_uploaded_by.toInt()== myDetails.user_id) View.VISIBLE else View.GONE
+//    is it my item VISIBILITY
+    fun isMyItem() = if (curItem.value!!.item_uploaded_by.toInt()== myDetails.user_id) View.VISIBLE else View.GONE
 
 
 
@@ -90,9 +91,9 @@ class ModelEbook(application: Application) : AndroidViewModel(application) {
      */
     class Factory(private val app: Application) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(ModelEbook::class.java)) {
+            if (modelClass.isAssignableFrom(ModelItemsForSale::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return ModelEbook(app) as T
+                return ModelItemsForSale(app) as T
             }
             throw IllegalArgumentException("Unable to construct viewmodel")
         }

@@ -73,7 +73,7 @@ class ClassUtilities() {
         val today = Date(currentTimeMillis)
         val dateFormat = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val title = dateFormat.format(today)
-        return if(with_extension) "lol_$title.jpg"
+        return if(with_extension) "$title.jpg"
         else  "lt_$title"
     }
 

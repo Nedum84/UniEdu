@@ -106,16 +106,16 @@ fun View.setupTextEditor(mEditor: RichEditor) {
 
     this.findViewById<View>(R.id.action_insert_numbers).setOnClickListener { mEditor.setNumbers() }
 
-    this.findViewById<View>(R.id.action_insert_image).setOnClickListener {
-//            mEditor.insertImage(
-//                "https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg",
-//                "dachshund", 320
-//            )
-        mEditor.insertImage(
-            prefs.getImgUploadPath(),
-            "dachshund", 320
-        )
-    }
+//    this.findViewById<View>(R.id.action_insert_image).setOnClickListener {
+////            mEditor.insertImage(
+////                "https://raw.githubusercontent.com/wasabeef/art/master/chip.jpg",
+////                "dachshund", 320
+////            )
+//        mEditor.insertImage(
+//            prefs.getImgUploadPath(),
+//            "dachshund", 320
+//        )
+//    }
 
     this.findViewById<View>(R.id.action_insert_youtube).setOnClickListener {
         mEditor.insertYoutubeVideo(

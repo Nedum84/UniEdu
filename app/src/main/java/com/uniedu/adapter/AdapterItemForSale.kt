@@ -2,6 +2,7 @@ package com.uniedu.adapter
 
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.uniedu.databinding.ItemEbookBinding
@@ -43,7 +44,7 @@ class AdapterItemForSale(private val clickListener: ItemForSaleClickListener) : 
 
 }
 //CLICK LISTENER
-class ItemForSaleClickListener(val clickListener: (ItemsForSale) -> Unit, val menuClickListener: (ItemsForSale) -> Unit) {
-    fun onClick(item: ItemsForSale) = clickListener(item)
-    fun onMenuClick(item: ItemsForSale) = menuClickListener(item)
+interface ItemForSaleClickListener {
+    fun onClick(item: ItemsForSale)
+    fun onMenuClick(item: ItemsForSale, view:View)
 }

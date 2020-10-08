@@ -98,7 +98,7 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
         val imgUpload = RetrofitPOST.retrofitWithJsonResponse.create(UploadImage::class.java)
         imgUpload.upload(
             "upload_image",
-            "answer",
+            "item_for_sale",
             map
         ).enqueue(object: Callback<ServerResponse> {
             override fun onFailure(call: Call<ServerResponse>, t: Throwable) {

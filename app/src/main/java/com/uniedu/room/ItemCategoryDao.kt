@@ -13,10 +13,14 @@ interface ItemCategoryDao {
     suspend fun upSert(list: List<ItemCategory>)
 
     @Query("SELECT * from $TABLE_ITEM_CATEGORY WHERE category_id  = :id")
-    suspend fun getBookById(id: Long): ItemCategory?
+    fun getById(id: Long): ItemCategory?
 
 
     @Query("SELECT * FROM $TABLE_ITEM_CATEGORY ORDER BY arr_order DESC")
-    fun getAllBooks(): LiveData<List<ItemCategory>>
+    fun getAll(): LiveData<List<ItemCategory>>
+
+
+    @Query("SELECT * FROM $TABLE_ITEM_CATEGORY WHERE category_id LIKE :id  ORDER BY arr_order DESC")
+    fun getAll(id: String): LiveData<List<ItemCategory>>
 }
 

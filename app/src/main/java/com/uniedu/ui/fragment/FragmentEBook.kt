@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uniedu.R
 import com.uniedu.adapter.AdapterEBooks
@@ -22,6 +23,7 @@ import com.uniedu.room.DatabaseRoom
 import com.uniedu.ui.fragment.bottomsheet.FragmentAnswer
 import com.uniedu.ui.fragment.bottomsheet.FragmentEBookDetail
 import com.uniedu.ui.fragment.bottomsheet.FragmentUploadEBook
+import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
 import com.uniedu.viewmodel.ModelEbook
 import com.uniedu.viewmodel.ModelQuestionsFrag
@@ -86,8 +88,9 @@ class FragmentEBook : BaseFragment() {
         })
         binding.recyclerEbook.apply {
             adapter = ADAPTER
-            layoutManager= LinearLayoutManager(activity)
+            layoutManager= GridLayoutManager(activity,  ClassUtilities().calculateNoOfColumns(thisContext,126f))
             itemAnimator = DefaultItemAnimator()
+            isNestedScrollingEnabled = false
         }
 
 

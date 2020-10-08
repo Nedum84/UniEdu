@@ -4,6 +4,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <variable
+            name="ebook"
+            type="com.uniedu.viewmodel.ModelEbook" />
+
+        <variable
+            name="course_code"
+            type="String" />
 
     </data>
 
@@ -17,37 +24,19 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@drawable/border_toolbar"
+            android:background="@android:color/transparent"
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/imageView10"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:navigationIcon="@drawable/ic_baseline_close_rotate"
+            app:navigationIcon="@drawable/ic_close_white_18dp"
+            android:elevation="2dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title=""
             app:titleTextColor="@color/colorPurpleDark" />
 
-        <include
-            android:id="@+id/include4"
-            layout="@layout/editor_toolbar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/publish"
-            app:layout_constraintStart_toStartOf="@+id/guideline16" />
-
-        <jp.wasabeef.richeditor.RichEditor
-            android:id="@+id/editor"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/border_no_radius_grey"
-            app:layout_constraintBottom_toTopOf="@+id/include4"
-            app:layout_constraintEnd_toStartOf="@+id/guideline13"
-            app:layout_constraintStart_toStartOf="@+id/guideline16"
-            app:layout_constraintTop_toBottomOf="@+id/question_holder" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline13"
@@ -63,56 +52,254 @@
             android:orientation="vertical"
             app:layout_constraintGuide_begin="8dp" />
 
+        <ImageView
+            android:id="@+id/imageView10"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ebook_bg" />
 
-        <LinearLayout
-            android:id="@+id/question_holder"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView2"
+            android:layout_width="120dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="70dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline16"
+            app:layout_constraintTop_toTopOf="@+id/imageView10">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/test"
+                imagePath="@{ebook.curEBook.bookCover()}"
+                tools:ignore="ContentDescription" />
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/download_ebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:clickable="true"
+            app:backgroundTint="@color/colorRed"
+            android:tint="@color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView10"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintTop_toBottomOf="@+id/imageView10"
+            app:srcCompat="@drawable/ic_round_archive_24" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView3"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="6dp"
+            android:layout_marginTop="2dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
             app:layout_constraintStart_toStartOf="@+id/guideline16"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar"
-            tools:ignore="UseCompoundDrawables">
-            <jp.wasabeef.richeditor.RichEditor
-                android:id="@+id/preViewQuestion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-            <LinearLayout
-                android:id="@+id/view_question"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
-                <TextView
-                    android:id="@+id/hideViewQuestion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="view question"
-                    android:textColor="@color/colorPurpleDark"
-                    android:textSize="18sp" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
-                <ImageView
-                    android:id="@+id/dropDownToggle"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Pages"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="123"
+                        android:text="@{ebook.curEBook.book_no_of_pages}"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Size"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="234KB"
+                        android:text="@{ebook.curEBook.bookSize()}"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Type"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:hint="PHOTO"
+                        android:text="@{ebook.curEBook.bookType()}"
+                        android:textAllCaps="true"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="Video"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="NO"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView33"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:hint="Principle of Electrical Appliances and Motor Regulations"
+            android:text="@{ebook.curEBook.book_title}"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="@color/colorWhite"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintTop_toTopOf="@+id/cardView2" />
+
+        <TextView
+            android:id="@+id/textView34"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:hint="ECE 324"
+            android:text="@{course_code}"
+            android:textColor="@color/colorLightGrey"
+            android:textColorHint="@color/colorLightGrey"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintTop_toBottomOf="@+id/textView33" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView4"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toStartOf="@+id/guideline16"
+            app:layout_constraintTop_toBottomOf="@+id/cardView3">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_expand_more"
-                    tools:ignore="ContentDescription"
-                    app:tint="@color/colorPurpleDark" />
+                    android:text="Description:"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="Lorem ipsum dolor sit amet, c"
+                    android:text="@{ebook.curEBook.bookDesc()}"
+                    android:textSize="18sp" />
             </LinearLayout>
-        </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textView35"
+            style="@style/HomeHeadline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Similar Books"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline16"
+            app:layout_constraintTop_toBottomOf="@+id/cardView4" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/guideline13"
+            app:layout_constraintStart_toStartOf="@+id/guideline16"
+            app:layout_constraintTop_toBottomOf="@+id/textView35" />
 
         <ImageView
-            android:id="@+id/publish"
-            android:layout_width="35dp"
-            android:layout_height="30dp"
+            android:id="@+id/edit_ebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:background="@drawable/design_circle_border2"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:elevation="4dp"
+            android:visibility="@{ebook.isMyQuestion()}"
             app:layout_constraintEnd_toStartOf="@+id/guideline13"
-            app:layout_constraintTop_toBottomOf="@+id/editor"
-            app:srcCompat="@drawable/ic_baseline_send"
+            app:layout_constraintTop_toTopOf="@+id/toolbar"
+            app:srcCompat="@drawable/ic_outline_brush_24"
             tools:ignore="ContentDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

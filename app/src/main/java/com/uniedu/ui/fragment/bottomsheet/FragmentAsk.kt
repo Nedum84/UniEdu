@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -31,6 +32,7 @@ import com.uniedu.utils.ClassProgressDialog
 import com.uniedu.utils.ClassUtilities
 import com.uniedu.viewmodel.ModelCourses
 import com.uniedu.viewmodel.ModelQuestionsFrag
+import com.uniedu.viewmodel.ModelUploadFile
 import jp.wasabeef.richeditor.RichEditor
 import kotlinx.android.synthetic.main.fragment_ask.*
 import kotlinx.coroutines.Dispatchers
@@ -47,13 +49,13 @@ import retrofit2.http.Part
 import retrofit2.http.PartMap
 import java.io.File
 import java.util.*
+import kotlin.collections.HashMap
 
 private const val QUESTION = "question"
 
 class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
     private var question: Questions? = null
     lateinit var binding:FragmentAskBinding
-    lateinit var databaseRoom: DatabaseRoom
 
     lateinit var modelQuestionsFrag: ModelQuestionsFrag
 
@@ -65,6 +67,7 @@ class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.DialogStyle)
         arguments?.let {
             question = it.getParcelable(QUESTION)
 
@@ -145,6 +148,16 @@ class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
         modelQuestionsFrag = requireActivity().run{
             ViewModelProvider(this, vFactory).get(ModelQuestionsFrag::class.java)
         }
+
+
+        modelUploadFile = requireActivity().run {
+            ViewModelProvider(this).get(ModelUploadFile::class.java)
+        }
+        modelUploadFile.imageUploaded.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            it?.getContentIfNotHandled()?.let {content->
+                publishContent(content)
+            }
+        })
     }
 
     private fun publishContent(content:String = mEditor.html) {
@@ -154,7 +167,7 @@ class FragmentAsk : BaseFragmentBottomSheetUploadFile() {
             question_from = myDetails.user_id,
             school_id = myDetails.user_school,
             question_body = content,
-            imgMap = null,
+            imgMap = HashMap(),
             course = "${course?.course_id}",
             is_adding_new_question = is_adding_new_question
         ).enqueue(object :Callback<ServerResponse>{
