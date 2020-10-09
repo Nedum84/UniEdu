@@ -4,7 +4,6 @@ package com.uniedu.room
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.uniedu.model.Courses
-import com.uniedu.model.Questions
 import com.uniedu.room.TableNames.Companion.TABLE_COURSES
 
 /**
@@ -21,6 +20,12 @@ interface CoursesDao {
 
     @Query("SELECT * from ${TABLE_COURSES} WHERE course_id = :id")
     fun getById(id: Int): Courses?
+
+    @Query("SELECT * from ${TABLE_COURSES} WHERE course_id = :id")
+    fun getByIdLive(id: Int): LiveData<Courses>?
+
+    @Query("SELECT * from $TABLE_COURSES WHERE course_id IN (:ids)")
+    fun getByIds(ids: List<Int>): LiveData<List<Courses>>
 
     @Query("SELECT * FROM $TABLE_COURSES ORDER BY course_id DESC")
     fun getAllCourses(): LiveData<List<Courses>>

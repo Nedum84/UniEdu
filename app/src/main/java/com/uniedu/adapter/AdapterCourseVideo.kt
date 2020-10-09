@@ -15,7 +15,7 @@ import com.uniedu.model.Courses
 
 class AdapterCourseVideo(private val clickListenerVideo: VideoCoursesClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val VIEW_FROM_HOME = true
+    var VIEW_FROM_HOME = true
     var mCtx:Context? = null
     var courses: List<Courses> = emptyList()
         set(value) {
@@ -50,8 +50,6 @@ class AdapterCourseVideo(private val clickListenerVideo: VideoCoursesClickListen
     inner class ViewHolder(val binding: ItemCoursesVideoBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(clickListenerVideo: VideoCoursesClickListener, course: Courses) {
-//            binding.root.context
-
             binding.course = course
             binding.clickListener = clickListenerVideo
             binding.executePendingBindings()
@@ -67,6 +65,9 @@ class AdapterCourseVideo(private val clickListenerVideo: VideoCoursesClickListen
         }
     }
 
+    companion object{
+
+    }
 }
 //CLICK LISTENER
 class VideoCoursesClickListener(val clickListener: (Courses) -> Unit) {

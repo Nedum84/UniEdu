@@ -26,6 +26,7 @@ import jp.wasabeef.richeditor.RichEditor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val EBOOK = "ebook"
@@ -53,17 +54,21 @@ class FragmentEBookDetail : BaseFragmentBottomSheet() {
                 ebook = it.first { it.book_id == ebook?.book_id }
 
                 modelEbook.setCurEBook(ebook!!)
+                launch {updateCourseCode()}
             }
         })
-        CoroutineScope(Dispatchers.Default).launch {
+        binding.apply { lifecycleOwner = this@FragmentEBookDetail }
+        modelEbook.setCurEBook(ebook!!)
+        binding.ebook = modelEbook
+    }
+
+    suspend fun updateCourseCode(){
+        withContext(Dispatchers.Default){
             try {
                 val course = db.coursesDao.getById(ebook!!.course_id.toInt())
                 binding.courseCode = course?.courseCode()
             } catch (e: Exception) {e.printStackTrace()}
         }
-        binding.apply { lifecycleOwner = this@FragmentEBookDetail }
-        modelEbook.setCurEBook(ebook!!)
-        binding.ebook = modelEbook
     }
 
 

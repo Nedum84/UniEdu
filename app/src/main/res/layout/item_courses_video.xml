@@ -14,7 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="100dp"
         android:onClick="@{()->clickListener.onClick(course)}"
         android:layout_marginBottom="6dp">
 
@@ -28,14 +28,15 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:hint="MEE234 (Mechanical Force of attraction 1)"
+            android:text="@{course.courseCodeAndTitle()}"
             android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorBlack"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/VidCourseTutor"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/VidCourseBanner2"
             app:layout_constraintTop_toBottomOf="@+id/VidNoOfTopics" />
-<!--        android:text="@{course.courseCodeAndTitle()}"-->
 
         <TextView
             android:id="@+id/VidNoOfTopics"
@@ -45,6 +46,7 @@
             android:text="@{course.noOfTopics()}"
             android:hint="12 topics"
             android:textColor="@color/colorAccent"
+            android:textColorHint="@color/colorAccent"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/VidCourseBanner"
@@ -62,6 +64,7 @@
             android:text="@{course.courseTutor}"
             android:hint="By Rabbai Chris Okolo"
             android:textColor="@color/colorBlueSky"
+            android:textColorHint="@color/colorBlueSky"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
@@ -71,14 +74,14 @@
         <ImageView
             android:id="@+id/VidCourseBanner2"
             android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:scaleType="centerCrop"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/test"
             imagePath="@{course.course_banner}"/>
-<!--        app:imagePath="@{courses.course_banner}"-->
+
         <TextView
             android:id="@+id/VidCoursePrice"
             android:layout_width="wrap_content"

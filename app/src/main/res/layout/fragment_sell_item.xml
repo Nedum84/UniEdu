@@ -142,6 +142,7 @@
             android:background="@drawable/border_no_radius_grey"
             android:orientation="vertical"
             android:padding="10dp"
+            android:minHeight="200dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline14"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/guideline15"

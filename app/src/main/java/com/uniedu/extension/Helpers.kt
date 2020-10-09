@@ -17,7 +17,10 @@ fun EditText.toString()  = this.toString().trim()
 
 private val imgSrcRgx = "src=\"(.*?)\"".toRegex(RegexOption.IGNORE_CASE)
 fun String.getImgPaths() = (imgSrcRgx.findAll(this).map {it.value.replace("src=","").replace("\"","")}.toList())
-                            .filter { !it.contains("http") }
+    .filter { !it.contains("http") }//excluding http(server) images
+
+fun String.getImgPathsWithHttp() = (imgSrcRgx.findAll(this).map {it.value.replace("src=","").replace("\"","")}.toList())
+    //Including server images
 
 private val imgTagRgx = "/<img[^>]*>/g".toRegex(RegexOption.IGNORE_CASE)
 fun String.removeImgTags() = this.replace(imgTagRgx,"")
@@ -43,13 +46,12 @@ fun List<String>.replaceWithNewImgPath(htmlString: String, serverResponse:String
     var content = htmlString
 
     val eachImg = serverResponse?.split(",,,")
-    var idx = 0;
+    var idx = 0
     eachImg?.forEach {
         val bothUrl = it.trim().split("===")
         if (bothUrl.size>1){
-//            val oldPath = this.filter { it.contains(bothUrl[0], true) }
             val  newUrl = bothUrl[1]
-            content = content.replace(this[idx], newUrl)
+            content = content.replace(this[idx], "\'$newUrl\'")
         }
         idx++
     }

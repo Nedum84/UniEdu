@@ -17,7 +17,7 @@ import com.uniedu.room.TableNames.Companion.DATABASE_NAME
     Answers::class,
     ItemCategory::class,
     Videos::class,
-    Topics::class,
+    TopicVideos::class,
     RecentlyViewed::class,
     MySubscription::class,
     ItemsForSale::class,

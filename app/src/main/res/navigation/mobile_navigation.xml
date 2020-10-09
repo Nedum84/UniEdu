@@ -39,4 +39,12 @@
         android:id="@+id/fragmentAsk"
         android:name="com.uniedu.ui.fragment.bottomsheet.FragmentAsk"
         android:label="FragmentAsk" />
+    <fragment
+        android:id="@+id/fragmentVideo"
+        android:name="com.uniedu.ui.fragment.FragmentVideo"
+        android:label="FragmentVideo" >
+        <action
+            android:id="@+id/action_fragmentVideo_to_fragmentTopicVideo"
+            app:destination="@id/fragmentTopicVideo" />
+    </fragment>
 </navigation>

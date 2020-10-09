@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
@@ -24,6 +25,7 @@ import com.uniedu.network.ServerResponse
 import com.uniedu.ui.fragment.BaseFragmentBottomSheetUploadFile
 import com.uniedu.viewmodel.*
 import jp.wasabeef.richeditor.RichEditor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,20 +59,31 @@ class FragmentSellItem : BaseFragmentBottomSheetUploadFile() {
         arguments?.let {
             item = it.getParcelable(ITEM)
 
-            if (!item!!.item_name.isNullOrEmpty()){
-                launch {
-                    is_adding_new = false
-                    withContext(Dispatchers.Main){
-                        itemCategory = db.itemCategoryDao.getById(item!!.item_category.toLong())
-                        mEditor.html = item?.item_description
-                        binding.itemCategory.text = itemCategory?.category_name
-                    }
-                }
+            item?.let{
+                is_adding_new = false
             }
         }
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (!is_adding_new){
+            mEditor.html = item?.item_description
+            binding.apply {
+                itemForSale = item
+                lifecycleOwner = this@FragmentSellItem
+            }
+
+
+            launch {
+                withContext(Dispatchers.Default){
+                    itemCategory = db.itemCategoryDao.getById(item!!.item_category.toLong())
+                    binding.itemCategory.text = itemCategory?.category_name
+                }
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sell_item, container, false)
@@ -78,7 +91,8 @@ class FragmentSellItem : BaseFragmentBottomSheetUploadFile() {
         initToolbar(binding.root)
         mEditor = binding.editor
         binding.root.setupTextEditor(mEditor)
-        mEditor.setPlaceholder("Additional Details...")
+        mEditor.setPlaceholder("Additional Details (including photos)")
+        mEditor.html = ""
 
         bindActions()
 
@@ -114,7 +128,7 @@ class FragmentSellItem : BaseFragmentBottomSheetUploadFile() {
             thisContext.toast("Enter quantity")
         }else if (itemPrice.isEmpty()){
             thisContext.toast("Enter price")
-        }else if (itemCategory==null || itemCategory!!.category_name.isNullOrEmpty()){
+        }else if (itemCategory==null || itemCategory!!.category_name.isEmpty()){
             context.let {it!!.toast("Choose category")}
         }else{
             pDialog?.createDialog()
@@ -163,6 +177,7 @@ class FragmentSellItem : BaseFragmentBottomSheetUploadFile() {
         val retrofit = RetrofitPOST.retrofitWithJsonResponse.create(SellItemService::class.java)
         retrofit.sellItemRequest(
             request_type = "sell_item",
+            item_id = item?.item_id,
             item_name = binding.itemName.text.toString(),
             school_id = myDetails.user_school,
             item_description = content,
@@ -237,6 +252,7 @@ interface SellItemService {
     @POST("sell_item.php")
     fun sellItemRequest(
         @Part("request_type") request_type: String,
+        @Part("item_id") item_id: Int? = null,
         @Part("item_name") item_name: String,
         @Part("item_description") item_description: String,
         @Part("item_category") item_category: String,

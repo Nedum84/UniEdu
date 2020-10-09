@@ -3,6 +3,7 @@ package com.uniedu.bindingadapter
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.uniedu.R
 
 object ClassImageBinding {
@@ -14,6 +15,14 @@ object ClassImageBinding {
         if (!imgUrlString.isNullOrEmpty()){
             Glide.with(view.context)
                 .load(imgUrlString)
+                .apply(
+                    RequestOptions()
+//                        .placeholder(R.drawable.test)//default image on loading
+                        .error(R.drawable.test)//without n/w, this img shows
+//                        .dontAnimate()
+//                        .fitCenter()
+                )
+                .thumbnail(.1f)
                 .into(view)
         }
     }

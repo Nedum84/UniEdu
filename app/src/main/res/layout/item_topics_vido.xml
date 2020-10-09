@@ -6,7 +6,7 @@
     <data>
         <variable
             name="topic"
-            type="com.uniedu.model.Topics" />
+            type="com.uniedu.model.TopicVideos" />
         <variable
             name="clickListener"
             type="com.uniedu.adapter.TopicClickListener" />
@@ -17,21 +17,22 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        android:onClick="@{()->clickListener.onClick(topic)}">
+        android:layout_height="wrap_content"
+        android:padding="8dp">
 
 
         <TextView
             android:id="@+id/textView22"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:hint="1. First Law of Thermodynamics"
             android:text="@{topic.getTitle(idx)}"
             android:textColor="@color/colorBlack"
             android:textColorHint="@color/colorPurpleDark"
             android:textSize="18sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/imageView13"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +50,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:onClick="@{()->clickListener.onClickMenu(topic)}"
+            android:onClick="@{()->clickListener.onClick(topic)}"
             app:srcCompat="@drawable/ic_baseline_more_horiz"
             tools:ignore="ContentDescription"
             app:tint="@color/colorPurpleDark" />

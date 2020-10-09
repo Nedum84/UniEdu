@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.uniedu.model.MyDetails
+import com.uniedu.room.DatabaseRoom
 import com.uniedu.utils.ClassSharedPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ abstract class BaseFragment : Fragment(), CoroutineScope{
     lateinit var prefs: ClassSharedPreferences
     lateinit var myDetails: MyDetails
     val application:Application by lazy { requireNotNull(this.activity).application }
+    val db: DatabaseRoom by lazy { DatabaseRoom.getDatabaseInstance(application) }
 
     private lateinit var job: Job
 

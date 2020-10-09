@@ -205,8 +205,10 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
         editor.focusEditor()
         editor.insertImage(
             imageFilePath,
-            "${UrlHolder.APP_FOLDER_NAME}", 280
+            "${UrlHolder.APP_FOLDER_NAME}", 50
         )
+        editor.html = editor.html+"nbsp;nbsp;"
+
         removeImage()
     }
 
@@ -232,8 +234,6 @@ abstract class BaseFragmentBottomSheetUploadFile : BaseFragmentBottomSheet(){
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // save file url in bundle as it will be null on screen orientation
-        // changes
         outState.putParcelable("file_uri", fileUri)
     }
 

@@ -19,6 +19,7 @@ import com.uniedu.viewmodel.ModelItemsForSale
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 private const val ITEM = "item_for_sale"
@@ -46,25 +47,26 @@ class FragmentItemForSaleDetail : BaseFragmentBottomSheet() {
                 item = it.first { it.item_id == item?.item_id }
 
                 modelItemsForSale.setCurItem(item!!)
+                launch {updateItemCat()}
             }
         })
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                val itCat = db.itemCategoryDao.getById(item!!.item_id.toLong())
-                binding.itemCategory = itCat?.category_name
-            } catch (e: Exception) {e.printStackTrace()}
-        }
         binding.apply { lifecycleOwner = this@FragmentItemForSaleDetail }
         modelItemsForSale.setCurItem(item!!)
         binding.item = modelItemsForSale
+    }
+    private suspend fun updateItemCat(){
+        withContext(Dispatchers.Default){
+            try {
+                val itCat = db.itemCategoryDao.getById(item!!.item_category.toLong())
+                binding.itemCategory = itCat?.category_name
+            } catch (e: Exception) {e.printStackTrace()}
+        }
     }
 
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_item_for_sale_detail, container, false)
-        // Inflate the layout for this fragment
-
 
         initToolbar()
         bindActions()

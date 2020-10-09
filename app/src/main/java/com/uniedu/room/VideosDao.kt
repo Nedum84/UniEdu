@@ -20,6 +20,9 @@ interface VideosDao {
     @Query("SELECT * FROM $TABLE_VIDEOS ORDER BY arr_order DESC")
     fun getAll(): LiveData<List<Videos>>
 
+    @Query("SELECT * FROM $TABLE_VIDEOS WHERE topic_id = :id ORDER BY arr_order DESC")
+    fun getByTopic(id: Int): LiveData<List<Videos>>
+
     @Query("DELETE FROM $TABLE_VIDEOS")
     fun delete()
 

@@ -3,17 +3,20 @@ package com.uniedu.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.uniedu.utils.ClassAlertDialog
 import com.uniedu.databinding.ItemTopicsVidoBinding
-import com.uniedu.model.Topics
+import com.uniedu.model.TopicVideos
+import com.uniedu.room.DatabaseRoom
+import com.uniedu.utils.ClassAlertDialog
 
 
-class AdapterTopic(private val clickListener: TopicClickListener) : RecyclerView.Adapter<AdapterTopic.ViewHolder>() {
+class AdapterTopic(val viewLifecycleOwner:LifecycleOwner, private val clickListener: TopicClickListener) : RecyclerView.Adapter<AdapterTopic.ViewHolder>() {
     private val viewPool = RecyclerView.RecycledViewPool()
 
-    var list: List<Topics> = emptyList()
+    var list: List<TopicVideos> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -35,18 +38,17 @@ class AdapterTopic(private val clickListener: TopicClickListener) : RecyclerView
 
     inner class ViewHolder(val binding: ItemTopicsVidoBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Topics, index:Int) {
+        fun bind(item: TopicVideos, index:Int) {
             binding.topic = item
             binding.clickListener = clickListener
-            binding.idx = index
+            binding.idx = index+1
 
 
             val childLayoutManager = LinearLayoutManager(binding.videosRecycler.context, LinearLayoutManager.HORIZONTAL, false)
             childLayoutManager.initialPrefetchItemCount = 4
             val ADAPTER = AdapterVideo(VideoClickListener {
-                ClassAlertDialog(binding.videosRecycler.context).toast("${it.video_name}")
+                ClassAlertDialog(binding.videosRecycler.context).toast("${it.video_title}")
             })
-//            ADAPTER.list = item.videos!!
 
             binding.videosRecycler.apply {
                 layoutManager = childLayoutManager
@@ -54,7 +56,11 @@ class AdapterTopic(private val clickListener: TopicClickListener) : RecyclerView
                 setRecycledViewPool(viewPool)
             }
 
-
+            val db = DatabaseRoom.getDatabaseInstance(binding.root.context)
+//            db.videosDao().getByTopic(item.topic_id).observe((binding.root.context as LifecycleOwner), Observer {
+            db.videosDao().getByTopic(item.topic_id).observe(viewLifecycleOwner, Observer {
+                ADAPTER.list = it
+            })
             binding.executePendingBindings()
         }
 
@@ -62,8 +68,10 @@ class AdapterTopic(private val clickListener: TopicClickListener) : RecyclerView
 
 }
 //CLICK LISTENER
-class TopicClickListener(val clickListener: (Topics) -> Unit) {
-    fun onClick(topic: Topics) = clickListener(topic)
-    fun onClickMenu(topic: Topics) = clickListener(topic)
+class TopicClickListener(val clickListener: (TopicVideos) -> Unit) {
+    fun onClick(topic: TopicVideos) = clickListener(topic)
+//    fun onClickMenu(topic: TopicVideos) = clickListener(topic)
 }
+
+
 

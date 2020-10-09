@@ -17,6 +17,7 @@ import com.uniedu.adapter.ItemForSaleClickListener
 import com.uniedu.databinding.FragmentItemForSaleBinding
 import com.uniedu.model.ItemsForSale
 import com.uniedu.ui.fragment.bottomsheet.FragmentEBookDetail
+import com.uniedu.ui.fragment.bottomsheet.FragmentItemForSaleDetail
 import com.uniedu.ui.fragment.bottomsheet.FragmentSellItem
 import com.uniedu.ui.fragment.bottomsheet.FragmentUploadEBook
 import com.uniedu.utils.ClassUtilities
@@ -75,7 +76,7 @@ class FragmentItemForSale : BaseFragment() {
 
         ADAPTER = AdapterItemForSale(object : ItemForSaleClickListener{
             override fun onClick(item: ItemsForSale) {
-                val frag = FragmentEBookDetail.newInstance(item)
+                val frag = FragmentItemForSaleDetail.newInstance(item)
                 requireActivity().let {
                     frag.apply {
                         show(it.supportFragmentManager, tag)
